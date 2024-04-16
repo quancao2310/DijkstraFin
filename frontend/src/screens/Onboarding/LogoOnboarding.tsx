@@ -5,67 +5,43 @@ import {
   Text,
   SafeAreaView,
   Dimensions,
+  TouchableOpacity,
 } from "react-native";
 import Logo from "../../images/lg.png";
 import Background from "../../images/bgg.png";
-import { useNavigation } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 const { width, height } = Dimensions.get("window");
 
-const LogoOnboarding = () => {
-  let navigate = useNavigation();
-
+const LogoOnboarding = ({ navigation }: any) => {
   return (
-    <ImageBackground
-      source={Background}
+    <TouchableOpacity
       style={{
-        height: null,
         width: width,
-        // resizeMode: "cover",
         overflow: "hidden",
         flex: 1,
         justifyContent: "center",
         alignItems: "center",
       }}
-      onTouchStart={() => {
-        navigate.navigate("OnboardingScreen");
-      }}
+      onPress={() => navigation.navigate("OnboardingScreen")}
     >
-      <SafeAreaView
-        style={{
-          opacity: 0,
-        }}
-        onTouchStart={() => {
-          navigate.navigate("OnboardingScreen");
-        }}
-      />
-      <Image
-        source={Logo}
-        style={{ maxWidth: "95%", resizeMode: "contain" }}
-        onTouchStart={() => {
-          navigate.navigate("OnboardingScreen");
-        }}
-      />
-      <SafeAreaView style={{ opacity: 0 }} />
-    </ImageBackground>
-    // <SafeAreaView
-    //   style={{
-    //     justifyContent: "center",
-    //     alignItems: "center",
-    //     flex: 1,
-    //     backgroundColor: "#9333EA",
-    //   }}
-    //   onTouchStart={() => {
-    //     navigate.navigate("OnboardingScreen");
-    //   }}
-    // >
-    //   {/* <ImageBackground source={Background}> */}
-    //   <Image
-    //     source={Background}
-    //     style={{ height: "100%", width: "100%", resizeMode: "cover" }}
-    //   />
-    //   {/* </ImageBackground> */}
-    // </SafeAreaView>
+      <ImageBackground source={Background}>
+        <SafeAreaView
+          style={{
+            opacity: 0,
+          }}
+        />
+        <Image
+          source={Logo}
+          style={{
+            maxWidth: "100%",
+            resizeMode: "contain",
+          }}
+        />
+        <SafeAreaView style={{ opacity: 0 }} />
+      </ImageBackground>
+    </TouchableOpacity>
   );
 };
 
