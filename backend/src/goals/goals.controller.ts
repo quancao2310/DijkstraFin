@@ -16,27 +16,27 @@ export class GoalsController {
   constructor(private readonly goalsService: GoalsService) {}
 
   @Post()
-  create(@Body() createGoalDto: CreateGoalDto) {
-    return this.goalsService.create(createGoalDto);
+  async create(@Body() createGoalDto: CreateGoalDto) {
+    return await this.goalsService.create(createGoalDto);
   }
 
   @Get()
-  findAll() {
-    return this.goalsService.findAll();
+  async findAll() {
+    return await this.goalsService.findAll();
   }
 
   @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.goalsService.findOne(+id);
+  async findOne(@Param("id") id: string) {
+    return await this.goalsService.findOne(id);
   }
 
   @Patch(":id")
-  update(@Param("id") id: string, @Body() updateGoalDto: UpdateGoalDto) {
-    return this.goalsService.update(+id, updateGoalDto);
+  async update(@Param("id") id: string, @Body() updateGoalDto: UpdateGoalDto) {
+    return await this.goalsService.update(id, updateGoalDto);
   }
 
   @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.goalsService.remove(+id);
+  async remove(@Param("id") id: string) {
+    return await this.goalsService.remove(id);
   }
 }

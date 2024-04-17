@@ -1,26 +1,30 @@
 import { Injectable } from "@nestjs/common";
 import { CreateGoalDto } from "./dto/create-goal.dto";
 import { UpdateGoalDto } from "./dto/update-goal.dto";
-
+import { Model } from "mongoose";
+import { InjectModel } from "@nestjs/mongoose";
+import { Goal } from "./schema/goal.schema";
 @Injectable()
 export class GoalsService {
-  create(createGoalDto: CreateGoalDto) {
-    return "This action adds a new goal";
+  constructor(@InjectModel(Goal.name) private goalModel: Model<Goal>) {}
+  async create(createGoalDto: CreateGoalDto): Promise<Goal> {
+    const newGoal = new this.goalModel(createGoalDto);
+    return newGoal.save();
   }
 
-  findAll() {
-    return `This action returns all goals`;
+  async findAll(): Promise<Goal[]> {
+    return this.goalModel.find().sort({ _id: -1 }).exec();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} goal`;
+  async findOne(id: string): Promise<Goal> {
+    return this.goalModel.findById(id).exec();
   }
 
-  update(id: number, updateGoalDto: UpdateGoalDto) {
-    return `This action updates a #${id} goal`;
+  async update(id: string, updateGoalDto: UpdateGoalDto) {
+    return this.goalModel.updateOne({ _id: id }, updateGoalDto);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} goal`;
+  async remove(id: string) {
+    return this.goalModel.deleteOne({ _id: id });
   }
 }
