@@ -3,11 +3,12 @@ import {
   BadRequestException,
   NotFoundException,
 } from "@nestjs/common";
-import { CreateRecordDto } from "./dto/create-record.dto";
-import { UpdateRecordDto } from "./dto/update-record.dto";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Query } from "mongoose";
 import { Record } from "./schema/record.schema";
+import { RecordType } from "./types/records.type";
+import { CreateRecordDto } from "./dto/create-record.dto";
+import { UpdateRecordDto } from "./dto/update-record.dto";
 
 @Injectable()
 export class RecordsService {
@@ -24,7 +25,7 @@ export class RecordsService {
     }
   }
 
-  async findAll(type?: "income" | "expense"): Promise<Record[]> {
+  async findAll(type?: RecordType): Promise<Record[]> {
     let query: Query<Record[], Record>;
     if (type !== undefined) {
       query = this.recordModel.find({ type: type });
@@ -35,24 +36,28 @@ export class RecordsService {
   }
 
   async findOne(id: string): Promise<Record> {
-    const record = await this.recordModel.findById(id).exec();
+    try {
+      const record = await this.recordModel.findById(id).exec();
 
-    if (!record) {
+      if (!record) {
+        throw new Error();
+      }
+
+      return record;
+    } catch (err) {
       throw new NotFoundException({ message: `No record with id: ${id}.` });
     }
-
-    return record;
   }
 
   async update(id: string, updateRecordDto: UpdateRecordDto): Promise<Record> {
     try {
-      const record = await this.recordModel.findByIdAndUpdate(
-        id,
-        updateRecordDto,
-        {
-          new: true,
-        }
-      );
+      const record = await this.recordModel
+        .findByIdAndUpdate(id, updateRecordDto, { new: true })
+        .exec();
+
+      if (!record) {
+        throw new Error();
+      }
 
       return record;
     } catch (err) {
@@ -63,6 +68,10 @@ export class RecordsService {
   async remove(id: string): Promise<Record> {
     try {
       const record = await this.recordModel.findByIdAndDelete(id);
+
+      if (!record) {
+        throw new Error();
+      }
 
       return record;
     } catch (err) {
