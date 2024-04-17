@@ -6,37 +6,42 @@ import {
   Patch,
   Param,
   Delete,
+  Query,
 } from "@nestjs/common";
 import { RecordsService } from "./records.service";
 import { CreateRecordDto } from "./dto/create-record.dto";
 import { UpdateRecordDto } from "./dto/update-record.dto";
+import { Record } from "./schema/record.schema";
 
 @Controller("records")
 export class RecordsController {
   constructor(private readonly recordsService: RecordsService) {}
 
   @Post()
-  create(@Body() createRecordDto: CreateRecordDto) {
+  async create(@Body() createRecordDto: CreateRecordDto): Promise<Record> {
     return this.recordsService.create(createRecordDto);
   }
 
   @Get()
-  findAll() {
-    return this.recordsService.findAll();
+  async findAll(@Query("type") type?: "income" | "expense"): Promise<Record[]> {
+    return this.recordsService.findAll(type);
   }
 
   @Get(":id")
-  findOne(@Param("id") id: string) {
-    return this.recordsService.findOne(+id);
+  async findOne(@Param("id") id: string): Promise<Record> {
+    return this.recordsService.findOne(id);
   }
 
   @Patch(":id")
-  update(@Param("id") id: string, @Body() updateRecordDto: UpdateRecordDto) {
-    return this.recordsService.update(+id, updateRecordDto);
+  async update(
+    @Param("id") id: string,
+    @Body() updateRecordDto: UpdateRecordDto
+  ): Promise<Record> {
+    return this.recordsService.update(id, updateRecordDto);
   }
 
   @Delete(":id")
-  remove(@Param("id") id: string) {
-    return this.recordsService.remove(+id);
+  async remove(@Param("id") id: string): Promise<Record> {
+    return this.recordsService.remove(id);
   }
 }
