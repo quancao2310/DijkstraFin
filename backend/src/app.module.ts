@@ -10,7 +10,9 @@ import { RecordsModule } from "./records/records.module";
 @Module({
   imports: [
     ConfigModule.forRoot(),
-    MongooseModule.forRoot(process.env.DB_URI),
+    MongooseModule.forRoot(
+      process.env.DB_URI || "mongodb://127.0.0.1:27017/DijkstraFin"
+    ),
     CatsModule,
     GoalsModule,
     RecordsModule,
