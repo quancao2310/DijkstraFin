@@ -118,7 +118,9 @@ const OnboardingScreen = ({ navigation }) => {
                 style={styles.btn}
                 onPress={() => navigation.replace("HomeScreen")}
               >
-                <Text style={{ fontWeight: "bold", fontSize: 15 }}>
+                <Text
+                  style={{ color: "#9333EA", fontWeight: "bold", fontSize: 15 }}
+                >
                   GET STARTED
                 </Text>
               </TouchableOpacity>
