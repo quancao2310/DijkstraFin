@@ -6,6 +6,10 @@ import OnboardingScreen from "./src/screens/Onboarding/OnboardingScreen";
 import HomeScreen from "./src/screens/HomeScreen";
 import LogoOnboarding from "./src/screens/Onboarding/LogoOnboarding";
 // import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Provider } from "react-redux";
+import { store } from "./src/store";
+import TestRedux from "./src/screens/TestRedux";
+
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -24,13 +28,16 @@ const App = () => {
   //   }, []);
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: true }}>
-        <Stack.Screen name="LogoOnboarding" component={LogoOnboarding} />
-        <Stack.Screen name="OnboardingScreen" component={OnboardingScreen} />
-        <Stack.Screen name="HomeScreen" component={HomeScreen} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <NavigationContainer>
+        <Stack.Navigator screenOptions={{ headerShown: true }}>
+          {/* <Stack.Screen name="TestRedux" component={TestRedux} /> */}
+          <Stack.Screen name="LogoOnboarding" component={LogoOnboarding} />
+          <Stack.Screen name="OnboardingScreen" component={OnboardingScreen} />
+          <Stack.Screen name="HomeScreen" component={HomeScreen} />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </Provider>
   );
 };
 
