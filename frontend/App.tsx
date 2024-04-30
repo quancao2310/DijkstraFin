@@ -7,6 +7,10 @@ import HomeScreen from "./src/screens/HomeScreen";
 import LogoOnboarding from "./src/screens/Onboarding/LogoOnboarding";
 import BottomBarNavigation from "./src/navigation/BottomBarNavigation";
 // import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Provider } from "react-redux";
+import { store } from "./src/store";
+import TestRedux from "./src/screens/TestRedux";
+
 const Stack = createStackNavigator();
 
 const App = () => {
@@ -39,12 +43,15 @@ const App = () => {
       </Stack.Navigator>
     </NavigationContainer>
   );
-  return !isOnboardingComplete ? (
-    onBoarding
-  ) : (
+  const mainScreen = (
     <NavigationContainer>
       <BottomBarNavigation></BottomBarNavigation>
     </NavigationContainer>
+  );
+  return (
+    <Provider store={store}>
+      {!isOnboardingComplete ? onBoarding : mainScreen}
+    </Provider>
   );
 };
 
