@@ -12,6 +12,7 @@ import MoneySource from "../../components/wallet/MoneySource";
 import ColorSystem from "../../color/ColorSystem";
 import AddNewSourceButton from "../../components/wallet/AddNewSourceButton";
 import NoRecord from "../../components/records/NoRecord";
+import RecordCard from "../../components/records/RecordCard";
 const tempData = [
   {
     name: "Visa",
@@ -41,7 +42,7 @@ export default function WalletScreen() {
       <ScrollView nestedScrollEnabled={true}>
         <DateFilterButton></DateFilterButton>
         <View style={styles.innerScroll}>
-          <ScrollView>
+          <ScrollView nestedScrollEnabled={true}>
             {tempData.map((item) => (
               <MoneySource
                 name={item.name}
@@ -54,6 +55,24 @@ export default function WalletScreen() {
         </View>
         <AddNewSourceButton></AddNewSourceButton>
         <NoRecord></NoRecord>
+        <RecordCard
+          source="tiền mặt"
+          title="mua quà"
+          amount={10000}
+          date="14/2/2024"
+        ></RecordCard>
+        <RecordCard
+          source="tiền mặt"
+          title="mua quà"
+          amount={10000}
+          date="14/2/2024"
+        ></RecordCard>
+        <RecordCard
+          source="tiền mặt"
+          title="mua quà"
+          amount={10000}
+          date="14/2/2024"
+        ></RecordCard>
       </ScrollView>
     </SafeAreaView>
   );
