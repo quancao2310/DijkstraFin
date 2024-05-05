@@ -8,7 +8,7 @@ const HomeScreen = () => {
     <SafeAreaView
       style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
     >
-      <CardBudget icon={IconGoalSystem.repair} balance={0} />
+      <CardBudget icon={IconGoalSystem.investment} balance={0} />
     </SafeAreaView>
   );
 };
