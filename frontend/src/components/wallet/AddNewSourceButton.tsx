@@ -1,10 +1,16 @@
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
 import { FontAwesome6 } from "@expo/vector-icons";
 import ColorSystem from "../../color/ColorSystem";
+import { stateToggle } from "../../store/reducers/addMoneySrcModal.reducer";
 const AddNewSourceButton = () => {
+  const dispatch = useDispatch();
   return (
     <View>
-      <TouchableOpacity style={styles.container}>
+      <TouchableOpacity
+        style={styles.container}
+        onPress={() => dispatch(stateToggle())}
+      >
         <View style={styles.buttonContent}>
           <FontAwesome6 name="add" size={24} color={ColorSystem.neutral[400]} />
           <Text
