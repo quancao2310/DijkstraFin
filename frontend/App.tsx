@@ -3,7 +3,7 @@ import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import OnboardingScreen from "./src/screens/Onboarding/OnboardingScreen";
-import HomeScreen from "./src/screens/HomeScreen";
+import HomeScreen from "./src/screens/Home/HomeScreen";
 import LogoOnboarding from "./src/screens/Onboarding/LogoOnboarding";
 import BottomBarNavigation from "./src/navigation/BottomBarNavigation";
 // import AsyncStorage from "@react-native-async-storage/async-storage";

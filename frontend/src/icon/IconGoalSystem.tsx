@@ -1,9 +1,4 @@
 const IconGoalSystem = {
-  boat: {
-    name: "directions-boat",
-    title: "Du thuyền",
-    color: "#9EB9F3",
-  },
   vacation: {
     name: "beach-access",
     title: "Du lịch",
@@ -33,6 +28,11 @@ const IconGoalSystem = {
     name: "weekend",
     title: "Nội thất",
     color: "#FE88B1",
+  },
+  boat: {
+    name: "directions-boat",
+    title: "Du thuyền",
+    color: "#9EB9F3",
   },
   investment: {
     name: "account-balance",

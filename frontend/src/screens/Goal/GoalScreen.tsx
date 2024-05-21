@@ -7,28 +7,28 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import CardBudget from "../components/Home/budget/CardBudget";
-import IconBudgetSystem from "../icon/IconBugetSystem";
-import IconGoalSystem from "../icon/IconGoalSystem";
-import ListCardBudget from "../components/Home/budget/ListCardBudget";
-import NoInfo from "../components/Home/budget/NoInfo";
+import CardGoal from "../../components/Goal/goal/CardGoal";
+import IconBudgetSystem from "../../icon/IconBugetSystem";
+import IconGoalSystem from "../../icon/IconGoalSystem";
+import ListCardGoal from "../../components/Goal/goal/ListCardGoal";
+import NoInfo from "../../components/Home/budget/NoInfo";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
-import ColorSystem from "../color/ColorSystem";
-import ModalAddBudget from "../components/Home/add/ModalAddBudget";
-import CircleGraph from "../components/Home/graph/CircleGraph";
+import ColorSystem from "../../color/ColorSystem";
+import ModalAddGoal from "../../components/Goal/add/ModalAddGoal";
+import CircleGraph from "../../components/Home/graph/CircleGraph";
 
-const budgets = [
-  { name: "restaurant", balance: 0 },
-  { name: "grocery", balance: 0 },
-  { name: "transport", balance: 0 },
-  { name: "cloth", balance: 0 },
-  { name: "beauty", balance: 0 },
-  { name: "bill", balance: 0 },
-  { name: "medication", balance: 0 },
-  { name: "entertainment", balance: 0 },
+const goals = [
+  { name: "vacation", balance: 0 },
+  { name: "house", balance: 0 },
+  { name: "graduation", balance: 0 },
+  { name: "car", balance: 0 },
+  { name: "repair", balance: 0 },
+  { name: "furniture", balance: 0 },
+  { name: "investment", balance: 0 },
+  { name: "boat", balance: 0 },
 ];
 
-const HomeScreen = () => {
+const GoalScreen = () => {
   const [isAddBudgetModalVisible, setIsAddBudgetModalVisible] = useState(false);
   const handleAddBudget = () => {
     setIsAddBudgetModalVisible(true);
@@ -50,7 +50,7 @@ const HomeScreen = () => {
         <View style={styles.containerview}>
           <CircleGraph />
           <View style={styles.addBudget}>
-            <Text style={{ fontSize: 20, fontWeight: "500" }}>Ngân sách</Text>
+            <Text style={{ fontSize: 20, fontWeight: "500" }}>Kế hoạch</Text>
             <TouchableOpacity
               style={styles.buttonAddBudget}
               onPress={handleAddBudget}
@@ -65,8 +65,8 @@ const HomeScreen = () => {
               </Text>
             </TouchableOpacity>
           </View>
-          <ListCardBudget budgets={budgets} />
-          <NoInfo name="ngân sách" />
+          <ListCardGoal goals={goals} />
+          <NoInfo name="kế hoạch" />
 
           <View style={styles.addBudget}>
             <Text style={{ fontSize: 20, fontWeight: "500" }}>Giao dịch</Text>
@@ -86,7 +86,7 @@ const HomeScreen = () => {
           </View>
           <NoInfo name="giao dịch" />
 
-          <ModalAddBudget
+          <ModalAddGoal
             isModalVisible={isAddBudgetModalVisible}
             setIsModalVisible={setIsAddBudgetModalVisible}
           />
@@ -118,4 +118,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomeScreen;
+export default GoalScreen;
