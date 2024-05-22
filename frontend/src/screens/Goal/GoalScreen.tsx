@@ -16,6 +16,7 @@ import { Feather, MaterialIcons } from "@expo/vector-icons";
 import ColorSystem from "../../color/ColorSystem";
 import ModalAddGoal from "../../components/Goal/add/ModalAddGoal";
 import CircleGraph from "../../components/Home/graph/CircleGraph";
+import ModalAddTransaction from "../../components/Home/add/ModalAddTransaction";
 
 const goals = [
   { name: "vacation", balance: 0 },
@@ -30,10 +31,14 @@ const goals = [
 
 const GoalScreen = () => {
   const [isAddBudgetModalVisible, setIsAddBudgetModalVisible] = useState(false);
+  const [isAddTransactionModalVisible, setIsAddTransactionModalVisible] =
+    useState(false);
   const handleAddBudget = () => {
     setIsAddBudgetModalVisible(true);
   };
-  const handleAddTransaction = () => {};
+  const handleAddTransaction = () => {
+    setIsAddTransactionModalVisible(true);
+  };
   return (
     <SafeAreaView
       style={[
@@ -89,6 +94,10 @@ const GoalScreen = () => {
           <ModalAddGoal
             isModalVisible={isAddBudgetModalVisible}
             setIsModalVisible={setIsAddBudgetModalVisible}
+          />
+          <ModalAddTransaction
+            isModalVisible={isAddTransactionModalVisible}
+            setIsModalVisible={setIsAddTransactionModalVisible}
           />
         </View>
       </ScrollView>
