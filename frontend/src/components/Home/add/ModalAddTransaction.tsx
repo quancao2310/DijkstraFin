@@ -78,12 +78,21 @@ const ModalAddTransaction = (props: any) => {
     { key: "8", value: "Làm đẹp" },
     { key: "9", value: "Giải trí" },
   ];
+  const dataIncomeType = [
+    { key: "0", value: "Chọn phân loại khoản thu", disabled: true },
+    { key: "1", value: "Tiền lương" },
+    { key: "2", value: "Tiền thưởng" },
+    { key: "3", value: "Tiền đầu tư" },
+    { key: "4", value: "Quà tặng" },
+    { key: "5", value: "Học bổng" },
+  ];
   const dataAccountType = [
     { key: "1", value: "Loại tài khoản", disabled: true },
     { key: "2", value: "Ví điện tử MOMO" },
     { key: "3", value: "Thẻ ngân hàng" },
     { key: "4", value: "Thẻ tín dụng" },
   ];
+
   return (
     <View>
       <Modal
@@ -141,39 +150,58 @@ const ModalAddTransaction = (props: any) => {
             <View style={styles.form}>
               <View style={styles.group}>
                 <View style={styles.group1}>
-                  <CheckBox
-                    title="Khoản thu"
-                    checked={type === "income"}
-                    onPress={() => setType("income")}
-                  />
-                  <CheckBox
-                    title="Khoản chi"
-                    checked={type === "expense"}
-                    onPress={() => setType("expense")}
-                  />
+                  <ScrollView
+                    showsVerticalScrollIndicator={false}
+                    showsHorizontalScrollIndicator={false}
+                    horizontal={true}
+                  >
+                    <CheckBox
+                      title="Khoản thu"
+                      checked={type === "income"}
+                      onPress={() => setType("income")}
+                    />
+                    <CheckBox
+                      title="Khoản chi"
+                      checked={type === "expense"}
+                      onPress={() => setType("expense")}
+                    />
+                    <CheckBox
+                      title="Tiết kiệm"
+                      checked={type === "saving"}
+                      onPress={() => setType("saving")}
+                    />
+                  </ScrollView>
                 </View>
               </View>
+              {type !== "saving" && (
+                <View style={styles.group}>
+                  <Text style={styles.label}>Tên giao dịch</Text>
+                  <MaterialIcons
+                    style={{
+                      position: "absolute",
+                      zIndex: 5,
+                      top: "50%",
+                      left: "3%",
+                    }}
+                    name="payment"
+                    size={22}
+                    color={ColorSystem.neutral[400]}
+                  />
+                  <TextInput style={styles.input} placeholder="Mô tả" />
+                </View>
+              )}
               <View style={styles.group}>
-                <Text style={styles.label}>Tên giao dịch</Text>
-                <MaterialIcons
-                  style={{
-                    position: "absolute",
-                    zIndex: 5,
-                    top: "50%",
-                    left: "3%",
-                  }}
-                  name="payment"
-                  size={22}
-                  color={ColorSystem.neutral[400]}
-                />
-                <TextInput style={styles.input} placeholder="Mô tả" />
-              </View>
-              <View style={styles.group}>
-                <Text style={styles.label}>Chọn phân loại</Text>
-
+                <Text style={styles.label}>
+                  Chọn phân loại{" "}
+                  {type === "expense"
+                    ? "chi"
+                    : type === "income"
+                    ? "thu"
+                    : "tiết kiệm"}
+                </Text>
                 <SelectList
                   setSelected={(val) => setSelected(val)}
-                  data={dataBudgetType}
+                  data={type === "income" ? dataIncomeType : dataBudgetType}
                   save="value"
                 />
               </View>

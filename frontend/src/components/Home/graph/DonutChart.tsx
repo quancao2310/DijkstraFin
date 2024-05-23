@@ -1,6 +1,11 @@
 import { StyleSheet, View } from "react-native";
 import React from "react";
-import { SharedValue, useDerivedValue } from "react-native-reanimated";
+import {
+  SharedValue,
+  useDerivedValue,
+  useAnimatedReaction,
+  useSharedValue,
+} from "react-native-reanimated";
 import { Canvas, Path, SkFont, Skia, Text } from "@shopify/react-native-skia";
 import DonutPath from "./DonutPath";
 
@@ -15,6 +20,9 @@ type Props = {
   totalValue: SharedValue<number>;
   font: SkFont;
   smallFont: SkFont;
+};
+const formatNumber = (num: number) => {
+  return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
 };
 
 const DonutChart = ({
@@ -36,7 +44,7 @@ const DonutChart = ({
   path.addCircle(radius, radius, innerRadius);
 
   const targetText = useDerivedValue(
-    () => `${Math.round(totalValue.value)}đ`,
+    () => `${Math.round(totalValue.value * 1000)}`,
     []
   );
 
