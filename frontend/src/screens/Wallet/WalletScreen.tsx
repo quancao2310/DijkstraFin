@@ -1,4 +1,5 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   SafeAreaView,
   Text,
@@ -13,6 +14,8 @@ import ColorSystem from "../../color/ColorSystem";
 import AddNewSourceButton from "../../components/wallet/AddNewSourceButton";
 import NoRecord from "../../components/records/NoRecord";
 import RecordCard from "../../components/records/RecordCard";
+import { RootState } from "../../store";
+import AddMoneySrcModal from "../../components/modals/AddMoneySourceModals";
 const tempData = [
   {
     name: "Visa",
@@ -39,6 +42,7 @@ export default function WalletScreen() {
     <SafeAreaView
       style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
     >
+      <AddMoneySrcModal></AddMoneySrcModal>
       <ScrollView nestedScrollEnabled={true}>
         <DateFilterButton></DateFilterButton>
         <View style={styles.innerScroll}>
