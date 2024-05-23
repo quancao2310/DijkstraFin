@@ -1,3 +1,6 @@
 
+
 .history/
-package-lock.json
+frontend/package-lock.json
+frontend/yarn.lock
+

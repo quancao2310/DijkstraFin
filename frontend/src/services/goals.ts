@@ -2,9 +2,9 @@ import { apiSlice } from ".";
 import { Goal } from "../types/goal.type";
 
 export const goalsApiSlice = apiSlice.injectEndpoints({
-  endpoints: builder => ({
+  endpoints: (builder) => ({
     createGoal: builder.mutation<Goal, Partial<Goal>>({
-      query: body => ({
+      query: (body) => ({
         url: "/goals",
         method: "POST",
         body: body,
@@ -14,7 +14,7 @@ export const goalsApiSlice = apiSlice.injectEndpoints({
       query: () => "/goals",
     }),
     getGoalById: builder.query<Goal, string>({
-      query: id => `/goals/${id}`,
+      query: (id) => `/goals/${id}`,
     }),
     updateGoal: builder.mutation<Goal, Partial<Goal>>({
       query: ({ _id, ...body }) => ({
@@ -24,7 +24,7 @@ export const goalsApiSlice = apiSlice.injectEndpoints({
       }),
     }),
     deleteGoal: builder.mutation<Goal, string>({
-      query: id => ({
+      query: (id) => ({
         url: `/goals/${id}`,
         method: "DELETE",
       }),
