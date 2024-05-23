@@ -1,6 +1,6 @@
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import HomeScreen from "../screens/HomeScreen";
+import HomeScreen from "../screens/Home/HomeScreen";
 import TempScreen from "../screens/TempScreen";
 import {
   MaterialCommunityIcons,
@@ -9,6 +9,7 @@ import {
 } from "@expo/vector-icons";
 import WalletScreen from "../screens/Wallet/WalletScreen";
 import ColorSystem from "../color/ColorSystem";
+import GoalScreen from "../screens/Goal/GoalScreen";
 const Tab = createBottomTabNavigator();
 export default function BottomBarNavigation() {
   return (
@@ -53,7 +54,7 @@ export default function BottomBarNavigation() {
       />
       <Tab.Screen
         name="Kế hoạch"
-        component={TempScreen}
+        component={GoalScreen}
         options={{
           headerShown: false,
           tabBarIcon: (props) => (
