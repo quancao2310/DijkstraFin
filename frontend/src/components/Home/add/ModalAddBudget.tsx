@@ -92,6 +92,7 @@ const ModalAddBudget = (props: any) => {
       >
         <View
           style={{
+            borderColor: "#000",
             borderTopLeftRadius: 30,
             borderTopRightRadius: 30,
             overflow: "hidden",

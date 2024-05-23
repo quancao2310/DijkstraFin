@@ -13,6 +13,7 @@ import {
   StyleSheet,
 } from "react-native";
 import { Icon } from "react-native-elements";
+import IconTransactionSystem from "../../../../icon/IconTransactionSystem";
 
 interface props {
   record: any;
@@ -58,9 +59,9 @@ const TransactionCard = (data: props) => {
         <View style={styles.leftItem}>
           <View style={styles.iconContainer}>
             <MaterialIcons
-              name={IconBudgetSystem[data.record.category].name}
+              name={IconTransactionSystem[data.record.category].name}
               size={32}
-              color={IconBudgetSystem[data.record.category].color}
+              color={IconTransactionSystem[data.record.category].color}
             />
           </View>
           <View style={{ paddingLeft: 15 }}>

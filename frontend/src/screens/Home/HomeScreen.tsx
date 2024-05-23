@@ -8,7 +8,6 @@ import {
   View,
 } from "react-native";
 import CardBudget from "../../components/Home/budget/CardBudget";
-import IconBudgetSystem from "../../icon/IconBugetSystem";
 import IconGoalSystem from "../../icon/IconGoalSystem";
 import ListCardBudget from "../../components/Home/budget/ListCardBudget";
 import NoInfo from "../../components/Home/budget/NoInfo";
@@ -18,6 +17,7 @@ import ModalAddBudget from "../../components/Home/add/ModalAddBudget";
 import ModalAddTransaction from "../../components/Home/add/ModalAddTransaction";
 import CircleGraph from "../../components/Home/graph/CircleGraph";
 import TransactionCard from "../../components/Home/add/transaction/TransactionCard";
+import IconBudgetSystem from "../../icon/IconBugetSystem";
 
 const budgets = [
   { name: "restaurant", balance: 0 },
@@ -58,24 +58,24 @@ const records = [
     date: "2024-04-17T00:00:00.000Z",
     __v: 0,
   },
-  //   {
-  //     _id: "661fb7f0e68985486257c3b9",
-  //     amount: 10000000,
-  //     type: "income",
-  //     category: "salary",
-  //     description: "Lương tháng 3",
-  //     date: "2024-04-17T00:00:00.000Z",
-  //     __v: 0,
-  //   },
-  //   {
-  //     _id: "661fb7f4e68985486257c3bb",
-  //     amount: 10000000,
-  //     type: "income",
-  //     category: "salary",
-  //     description: "Lương tháng 4",
-  //     date: "2024-04-17T00:00:00.000Z",
-  //     __v: 0,
-  //   },
+  {
+    _id: "661fb7f0e68985486257c3b9",
+    amount: 10000000,
+    type: "income",
+    category: "salary",
+    description: "Lương tháng 3",
+    date: "2024-04-17T00:00:00.000Z",
+    __v: 0,
+  },
+  {
+    _id: "661fb7f4e68985486257c3bb",
+    amount: 10000000,
+    type: "income",
+    category: "salary",
+    description: "Lương tháng 4",
+    date: "2024-04-17T00:00:00.000Z",
+    __v: 0,
+  },
   {
     _id: "66201ee6b7049857abc2b2dc",
     amount: 25000,
@@ -87,7 +87,7 @@ const records = [
   },
 ];
 
-const HomeScreen = () => {
+const HomeScreen = ({ navigation }: any) => {
   const [isAddBudgetModalVisible, setIsAddBudgetModalVisible] = useState(false);
   const [isAddTransactionModalVisible, setIsAddTransactionModalVisible] =
     useState(false);
@@ -97,6 +97,10 @@ const HomeScreen = () => {
   const handleAddTransaction = () => {
     setIsAddTransactionModalVisible(true);
   };
+  const handleViewAllTransactions = () => {
+    navigation.navigate("AllTransaction", { data: records });
+  };
+
   return (
     <SafeAreaView
       style={[
@@ -153,6 +157,25 @@ const HomeScreen = () => {
             records.map((item, index) => {
               return <TransactionCard record={item} key={index} />;
             })}
+          {records && records.length > 3 && (
+            <TouchableOpacity
+              style={{
+                paddingTop: 15,
+                paddingBottom: 30,
+                alignItems: "center",
+              }}
+              onPress={handleViewAllTransactions}
+            >
+              <Text
+                style={{
+                  color: ColorSystem.secondary[600],
+                  fontSize: 16,
+                }}
+              >
+                Xem tất cả
+              </Text>
+            </TouchableOpacity>
+          )}
           <ModalAddBudget
             isModalVisible={isAddBudgetModalVisible}
             setIsModalVisible={setIsAddBudgetModalVisible}
