@@ -8,7 +8,7 @@ import {
   Delete,
 } from "@nestjs/common";
 import { GoalsService } from "./goals.service";
-import { Goal } from "./schema/goal.schema";
+import { Goal } from "./schemas/goal.schema";
 import { CreateGoalDto } from "./dto/create-goal.dto";
 import { UpdateGoalDto } from "./dto/update-goal.dto";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
@@ -19,11 +19,15 @@ export class GoalsController {
   constructor(private readonly goalsService: GoalsService) {}
 
   @Post()
-  @ApiOperation({ summary: "Create a new goal, either budget or saving" })
+  @ApiOperation({ summary: "Create a new goal" })
   @ApiResponse({
     status: 201,
     description: "The goal has been successfully added.",
     type: Goal,
+  })
+  @ApiResponse({
+    status: 400,
+    description: "The required fields are missing or in invalid format.",
   })
   async create(@Body() createGoalDto: CreateGoalDto): Promise<Goal> {
     return this.goalsService.create(createGoalDto);
@@ -48,6 +52,10 @@ export class GoalsController {
     type: Goal,
   })
   @ApiResponse({
+    status: 400,
+    description: "The provided id is invalid.",
+  })
+  @ApiResponse({
     status: 404,
     description: "There is no goal with the given id.",
   })
@@ -59,8 +67,12 @@ export class GoalsController {
   @ApiOperation({ summary: "Update a goal by ID" })
   @ApiResponse({
     status: 200,
-    description: "The goal with the given ID has been successfully updated.",
+    description: "The goal has been successfully updated.",
     type: Goal,
+  })
+  @ApiResponse({
+    status: 400,
+    description: "The provided ids are invalid.",
   })
   @ApiResponse({
     status: 404,
@@ -77,8 +89,12 @@ export class GoalsController {
   @ApiOperation({ summary: "Delete a goal by ID" })
   @ApiResponse({
     status: 200,
-    description: "The goal with the given ID has been successfully deleted.",
+    description: "The goal has been successfully deleted.",
     type: Goal,
+  })
+  @ApiResponse({
+    status: 400,
+    description: "The provided id is invalid.",
   })
   @ApiResponse({
     status: 404,
