@@ -1,4 +1,4 @@
-export enum RecordType {
+export enum CategoryType {
   INCOME = "income",
   EXPENSE = "expense",
 }
