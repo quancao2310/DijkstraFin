@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { Goal } from "./schema/goal.schema";
+import { Goal } from "./schemas/goal.schema";
 import { CreateGoalDto } from "./dto/create-goal.dto";
 import { UpdateGoalDto } from "./dto/update-goal.dto";
 
@@ -19,46 +19,32 @@ export class GoalsService {
   }
 
   async findOne(id: string): Promise<Goal> {
-    try {
-      const goal = await this.goalModel.findById(id).exec();
-
-      if (!goal) {
-        throw new Error();
-      }
-
-      return goal;
-    } catch (err) {
-      throw new NotFoundException({ message: `No goal with id: ${id}.` });
+    const goal = await this.goalModel.findById(id).exec();
+    if (!goal) {
+      throw new NotFoundException(`No goal with id: ${id}.`);
     }
+    return goal;
+  }
+
+  async findByUserId(userId: string): Promise<Goal[]> {
+    return this.goalModel.find({ userId }).sort({ _id: -1 }).exec();
   }
 
   async update(id: string, updateGoalDto: UpdateGoalDto): Promise<Goal> {
-    try {
-      const goal = await this.goalModel
-        .findByIdAndUpdate(id, updateGoalDto, { new: true })
-        .exec();
-
-      if (!goal) {
-        throw new Error();
-      }
-
-      return goal;
-    } catch (err) {
-      throw new NotFoundException({ message: `No goal with id: ${id}.` });
+    const goal = await this.goalModel
+      .findByIdAndUpdate(id, updateGoalDto, { new: true })
+      .exec();
+    if (!goal) {
+      throw new NotFoundException(`No goal with id: ${id}.`);
     }
+    return goal;
   }
 
   async remove(id: string): Promise<Goal> {
-    try {
-      const goal = await this.goalModel.findByIdAndDelete(id).exec();
-
-      if (!goal) {
-        throw new Error();
-      }
-
-      return goal;
-    } catch (err) {
-      throw new NotFoundException({ message: `No goal with id: ${id}.` });
+    const goal = await this.goalModel.findByIdAndDelete(id).exec();
+    if (!goal) {
+      throw new NotFoundException(`No goal with id: ${id}.`);
     }
+    return goal;
   }
 }

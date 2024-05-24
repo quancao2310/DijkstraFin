@@ -9,8 +9,8 @@ import {
   Query,
 } from "@nestjs/common";
 import { RecordsService } from "./records.service";
-import { Record } from "./schema/record.schema";
-import { RecordType } from "./types/records.type";
+import { Record } from "./schemas/record.schema";
+import { TransactionType } from "../types/transactions.type";
 import { CreateRecordDto } from "./dto/create-record.dto";
 import { UpdateRecordDto } from "./dto/update-record.dto";
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from "@nestjs/swagger";
@@ -21,7 +21,7 @@ export class RecordsController {
   constructor(private readonly recordsService: RecordsService) {}
 
   @Post()
-  @ApiOperation({ summary: "Create a new record, either income or expense" })
+  @ApiOperation({ summary: "Create a new record" })
   @ApiResponse({
     status: 201,
     description: "The goal has been successfully added.",
@@ -29,7 +29,7 @@ export class RecordsController {
   })
   @ApiResponse({
     status: 400,
-    description: "The required fields are missing.",
+    description: "The required fields are missing or in invalid format.",
   })
   async create(@Body() createRecordDto: CreateRecordDto): Promise<Record> {
     return this.recordsService.create(createRecordDto);
@@ -42,8 +42,8 @@ export class RecordsController {
     description: "All the record goals.",
     type: [Record],
   })
-  @ApiQuery({ name: "type", enum: RecordType, required: false })
-  async findAll(@Query("type") type?: RecordType): Promise<Record[]> {
+  @ApiQuery({ name: "type", enum: TransactionType, required: false })
+  async findAll(@Query("type") type?: TransactionType): Promise<Record[]> {
     return this.recordsService.findAll(type);
   }
 
@@ -53,6 +53,10 @@ export class RecordsController {
     status: 200,
     description: "Record with the given ID.",
     type: Record,
+  })
+  @ApiResponse({
+    status: 400,
+    description: "The provided id is invalid.",
   })
   @ApiResponse({
     status: 404,
@@ -68,6 +72,10 @@ export class RecordsController {
     status: 200,
     description: "The record with the given ID has been successfully updated.",
     type: Record,
+  })
+  @ApiResponse({
+    status: 400,
+    description: "The provided ids are invalid.",
   })
   @ApiResponse({
     status: 404,
@@ -86,6 +94,10 @@ export class RecordsController {
     status: 200,
     description: "The record with the given ID has been successfully deleted.",
     type: Record,
+  })
+  @ApiResponse({
+    status: 400,
+    description: "The provided id is invalid.",
   })
   @ApiResponse({
     status: 404,
