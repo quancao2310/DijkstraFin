@@ -26,8 +26,8 @@ function formatDate(inputDate) {
   return formattedDate;
 }
 const ModalAddBudget = (props: any) => {
+  const { isModalVisible, setIsModalVisible, moneySources } = props;
   const [money, setMoney] = useState(0);
-  const { isModalVisible, setIsModalVisible } = props;
   const [selected, setSelected] = useState("");
   const today = new Date();
   const startDate = getFormatedDate(
@@ -74,12 +74,10 @@ const ModalAddBudget = (props: any) => {
     { key: "8", value: "Làm đẹp" },
     { key: "9", value: "Giải trí" },
   ];
-  const dataAccountType = [
-    { key: "1", value: "Loại tài khoản", disabled: true },
-    { key: "2", value: "Ví điện tử MOMO" },
-    { key: "3", value: "Thẻ ngân hàng" },
-    { key: "4", value: "Thẻ tín dụng" },
-  ];
+  const dataAccountType = moneySources.map((source: any) => ({
+    key: source._id,
+    value: source.name,
+  }));
   return (
     <View>
       <Modal

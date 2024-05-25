@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { SelectList } from "react-native-dropdown-select-list";
 import { CheckBox, Overlay } from "react-native-elements";
+import IconPicker from "react-native-icon-picker";
 import DatePicker, {
   getToday,
   getFormatedDate,
@@ -19,38 +20,47 @@ import {
 import CurrencyInput from "react-native-currency-input";
 import { MaterialIcons } from "@expo/vector-icons";
 import ColorSystem from "../../../color/ColorSystem";
+import IconGoalSystem from "../../../icon/IconGoalSystem";
+
 function formatDate(inputDate) {
   // dd/mm/yyyy -> yyyy/mm/dd
   var parts = inputDate.split("/");
   var formattedDate = parts[2] + "/" + parts[1] + "/" + parts[0];
   return formattedDate;
 }
+const today = new Date();
+const startDate = getFormatedDate(
+  today.setDate(today.getDate() + 1),
+  "YYYY/MM/DD"
+);
 const ModalAddGoal = (props: any) => {
-  const [money, setMoney] = useState(0);
   const { isModalVisible, setIsModalVisible } = props;
-  const [selected, setSelected] = useState("");
-  const today = new Date();
-  const startDate = getFormatedDate(
-    today.setDate(today.getDate() + 1),
-    "YYYY/MM/DD"
-  );
+
+  const [name, setName] = useState("");
+  const [icon, setIcon] = useState({
+    color: ColorSystem.neutral[300],
+    family: "MaterialIcons",
+    icon: "category",
+  });
+  const [money, setMoney] = useState(0);
   const [dateStart, setDateStart] = useState("");
   const [dateEnd, setDateEnd] = useState("");
   const [isSaveMonthly, setIsSaveMonthly] = useState(false);
+
   const [openSelectDate, setOpenSelectDate] = useState(false);
   const [openSelectEndDate, setOpenSelectEndDate] = useState(false);
+  const [showIconPicker, setShowIconPicker] = useState(false);
+  const [selected, setSelected] = useState("");
 
   const handleChangeDateStart = (date: any) => {
     date = formatDate(date);
     console.log(date);
     console.log(formatDate(date));
-
     setDateStart(date);
   };
   const handleChangeDateEnd = (date: any) => {
     date = formatDate(date);
     console.log(date);
-
     setDateEnd(date);
   };
   const handlePressSelectDate = () => {
@@ -96,7 +106,7 @@ const ModalAddGoal = (props: any) => {
             borderTopLeftRadius: 30,
             borderTopRightRadius: 30,
             overflow: "hidden",
-            height: "80%",
+            height: "90%",
             marginTop: "auto",
             backgroundColor: "#fff",
             padding: 30,
@@ -139,11 +149,57 @@ const ModalAddGoal = (props: any) => {
               <View style={styles.group}>
                 <Text style={styles.label}>Tên kế hoạch</Text>
 
-                <SelectList
-                  setSelected={(val) => setSelected(val)}
-                  data={dataBudgetType}
-                  save="value"
+                <MaterialIcons
+                  style={{
+                    position: "absolute",
+                    zIndex: 5,
+                    top: "50%",
+                    left: "3%",
+                  }}
+                  name="savings"
+                  size={22}
+                  color={ColorSystem.neutral[400]}
                 />
+                <TextInput
+                  style={styles.input}
+                  placeholder="Mô tả"
+                  onChangeText={(text) => setName(text)}
+                />
+              </View>
+              <View style={styles.group}>
+                <Text style={styles.label}>Chọn biểu tượng</Text>
+                <View
+                  style={{
+                    paddingLeft: 35,
+                    paddingVertical: 5,
+                    borderWidth: 1,
+                    borderRadius: 10,
+                    borderColor: "gray",
+                    backgroundColor: "#fff",
+                  }}
+                >
+                  <IconPicker
+                    headerTitle="Chọn biểu tượng cho kế hoạch"
+                    showIconPicker={showIconPicker}
+                    toggleIconPicker={() => setShowIconPicker(!showIconPicker)}
+                    iconDetails={Object.values(IconGoalSystem).map((icon) => ({
+                      family: "MaterialIcons",
+                      icons: [icon.name],
+                      color: icon.color,
+                    }))}
+                    onSelect={(icon) => {
+                      console.log(icon);
+                      setIcon(icon);
+                      setShowIconPicker(!showIconPicker);
+                    }}
+                    content={
+                      <MaterialIcons
+                        name={icon.icon as keyof typeof MaterialIcons.glyphMap}
+                        size={32}
+                      />
+                    }
+                  />
+                </View>
               </View>
               <View style={styles.group}>
                 <Text style={styles.label}>Số tiền</Text>
