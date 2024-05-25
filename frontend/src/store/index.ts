@@ -1,13 +1,15 @@
 import { configureStore } from "@reduxjs/toolkit";
 import tmpReducer from "./reducers/tmp";
 import { apiSlice } from "../services";
+import addMoneySrcModalReducer from "./reducers/addMoneySrcModal.reducer";
 
 export const store = configureStore({
   reducer: {
     tmp: tmpReducer,
+    AddMoneySrcModal: addMoneySrcModalReducer,
     [apiSlice.reducerPath]: apiSlice.reducer,
   },
-  middleware: getDefaultMiddleware =>
+  middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(apiSlice.middleware),
 });
 

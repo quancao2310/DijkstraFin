@@ -1,11 +1,15 @@
 import { NestFactory } from "@nestjs/core";
-import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 import { AppModule } from "./app.module";
+import { ValidationPipe } from "@nestjs/common";
+import { MongooseErrorFilter } from "./mongoose-error.filter";
+import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix("api/v1");
   app.enableCors();
+  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalFilters(new MongooseErrorFilter());
 
   const config = new DocumentBuilder()
     .setTitle("DijkstraFin API Documentation")
