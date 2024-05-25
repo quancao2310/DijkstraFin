@@ -6,13 +6,13 @@ import {
 import { InjectModel } from "@nestjs/mongoose";
 import { Model, Query } from "mongoose";
 import { Record } from "./schemas/record.schema";
-import { TransactionType } from "../types/transactions.type";
+import { TransactionType } from "../types";
 import { CreateRecordDto } from "./dto/create-record.dto";
 import { UpdateRecordDto } from "./dto/update-record.dto";
-import { CategoriesService } from "src/categories/categories.service";
-import { MoneySourcesService } from "src/money-sources/money-sources.service";
-import { GoalsService } from "src/goals/goals.service";
-import { BudgetsService } from "src/budgets/budgets.service";
+import { CategoriesService } from "../categories/categories.service";
+import { MoneySourcesService } from "../money-sources/money-sources.service";
+import { GoalsService } from "../goals/goals.service";
+import { BudgetsService } from "../budgets/budgets.service";
 
 @Injectable()
 export class RecordsService {

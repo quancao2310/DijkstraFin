@@ -8,8 +8,8 @@ import { Model } from "mongoose";
 import { Budget } from "./schemas/budget.schema";
 import { CreateBudgetDto } from "./dto/create-budget.dto";
 import { UpdateBudgetDto } from "./dto/update-budget.dto";
-import { CategoriesService } from "src/categories/categories.service";
-import { TransactionType } from "src/types";
+import { CategoriesService } from "../categories/categories.service";
+import { TransactionType } from "../types";
 
 @Injectable()
 export class BudgetsService {
