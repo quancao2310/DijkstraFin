@@ -6,7 +6,7 @@ import { CreateMoneySourceDto } from "./dto/create-money-source.dto";
 import { UpdateMoneySourceDto } from "./dto/update-money-source.dto";
 
 @Injectable()
-export class MoneySourceService {
+export class MoneySourcesService {
   constructor(
     @InjectModel(MoneySource.name) private moneySourceModel: Model<MoneySource>
   ) {}
