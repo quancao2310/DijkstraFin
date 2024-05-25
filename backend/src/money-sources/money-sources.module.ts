@@ -1,8 +1,8 @@
 import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { MoneySource, MoneySourceSchema } from "./schemas/money-source.schema";
-import { MoneySourceController } from "./money-sources.controller";
-import { MoneySourceService } from "./money-sources.service";
+import { MoneySourcesController } from "./money-sources.controller";
+import { MoneySourcesService } from "./money-sources.service";
 
 @Module({
   imports: [
@@ -10,8 +10,8 @@ import { MoneySourceService } from "./money-sources.service";
       { name: MoneySource.name, schema: MoneySourceSchema },
     ]),
   ],
-  controllers: [MoneySourceController],
-  providers: [MoneySourceService],
-  exports: [MoneySourceService],
+  controllers: [MoneySourcesController],
+  providers: [MoneySourcesService],
+  exports: [MoneySourcesService],
 })
-export class MoneySourceModule {}
+export class MoneySourcesModule {}

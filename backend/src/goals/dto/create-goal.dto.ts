@@ -50,6 +50,12 @@ export class CreateGoalDto {
   })
   endDate: string;
 
+  @ApiProperty({
+    description: "The icon of the goal.",
+    example: "house",
+  })
+  icon: string;
+
   @IsString()
   @IsNotEmpty()
   @ApiProperty({
@@ -57,4 +63,12 @@ export class CreateGoalDto {
     example: "664da67d075cdd1e0f0a9851",
   })
   userId: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: "The ID of the money source this goal belongs to.",
+    example: "664da67d075cdd1e0f0a9851",
+  })
+  moneySourceId: string;
 }
