@@ -1,19 +1,23 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
-import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Controller, Post, Body, HttpCode, HttpStatus } from "@nestjs/common";
+import { AuthService } from "./auth.service";
+import { SignInDto } from "./dto/sign-in.dto";
+import { CreateUserDto } from "../users/dto/create-user.dto";
+import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 
-@Controller('auth')
+@Controller("auth")
+@ApiTags("Authentication")
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
-  @Post('login')
-  @ApiOperation({summary: "Log in with email and password, return Object with access_token"})
+  @Post("login")
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: "Log in with email and password, return Object with access_token",
+  })
   @ApiResponse({
-    status: 201,
+    status: 200,
     description: "User logged in successfully",
-    type: Object
+    type: Object,
   })
   @ApiResponse({
     status: 404,
@@ -21,22 +25,27 @@ export class AuthController {
   })
   @ApiResponse({
     status: 401,
-    description: "The given password is not correct."
+    description: "The given password is not correct.",
   })
   @ApiResponse({
     status: 500,
-    description: "Something wrong with the system so that it is currently unable to process your password."
+    description:
+      "Something wrong with the system so that it is currently unable to process your password.",
   })
-  async signIn(@Body() signInDto: Record<string, string>): Promise<{ access_token: string; }> {
+  async signIn(
+    @Body() signInDto: SignInDto
+  ): Promise<{ access_token: string }> {
     return this.authService.signIn(signInDto.email, signInDto.password);
   }
 
-  @Post('signup')
-  @ApiOperation({summary: "Sign Up a new user, return Object with access_token"})
+  @Post("signup")
+  @ApiOperation({
+    summary: "Sign up a new user, return Object with access_token",
+  })
   @ApiResponse({
     status: 201,
     description: "User signed up successfully",
-    type: Object
+    type: Object,
   })
   @ApiResponse({
     status: 400,
@@ -44,9 +53,12 @@ export class AuthController {
   })
   @ApiResponse({
     status: 500,
-    description: "Something wrong with the system so that it is currently unable to process your password."
+    description:
+      "Something wrong with the system so that it is currently unable to process your password.",
   })
-  async signUp(@Body() signUpDto: CreateAuthDto): Promise<{ access_token: string; }> {
+  async signUp(
+    @Body() signUpDto: CreateUserDto
+  ): Promise<{ access_token: string }> {
     return this.authService.signUp(signUpDto);
   }
 }
