@@ -29,7 +29,6 @@ export class Record {
 
   @Prop({
     type: String,
-    required: true,
     default: "",
   })
   @ApiProperty({
@@ -79,11 +78,23 @@ export class Record {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Goal",
     default: null,
+    validate: {
+      validator: function (value: string | null) {
+        console.log(value);
+        return this.type !== TransactionType.SAVING
+          ? value === null
+          : value !== null;
+      },
+      message: function (props: any) {
+        return props.value !== null
+          ? "Goal should only be set for saving records."
+          : `Goal ID is required for saving records.`;
+      },
+    },
   })
   @ApiPropertyOptional({
     description: `The ID of the goal that this record is related to.
-      If not specified, it will be null. Only records of type "saving" can have a goal.
-      Validation for this has not been setup yet. Please make sure to follow this.`,
+      A record of type "saving" must have a goal. Other types must not have a goal.`,
     example: "66201ff2b7049857abc2b2eb",
     default: null,
   })
@@ -93,3 +104,7 @@ export class Record {
 export type RecordDocument = mongoose.HydratedDocument<Record>;
 
 export const RecordSchema = SchemaFactory.createForClass(Record);
+
+RecordSchema.pre(["find", "findOne"], function () {
+  this.populate("categoryId").populate("moneySourceId").populate("goalId");
+});

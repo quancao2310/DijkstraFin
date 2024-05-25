@@ -7,7 +7,7 @@ import {
   Param,
   Delete,
 } from "@nestjs/common";
-import { MoneySourceService } from "./money-sources.service";
+import { MoneySourcesService } from "./money-sources.service";
 import { MoneySource } from "./schemas/money-source.schema";
 import { CreateMoneySourceDto } from "./dto/create-money-source.dto";
 import { UpdateMoneySourceDto } from "./dto/update-money-source.dto";
@@ -15,8 +15,8 @@ import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 
 @Controller("money-sources")
 @ApiTags("Money Sources")
-export class MoneySourceController {
-  constructor(private readonly moneySourceService: MoneySourceService) {}
+export class MoneySourcesController {
+  constructor(private readonly moneySourceService: MoneySourcesService) {}
 
   @Post()
   @ApiOperation({ summary: "Create a new money source" })

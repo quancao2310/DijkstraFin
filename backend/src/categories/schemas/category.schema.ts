@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { ApiProperty } from "@nestjs/swagger";
-import { CategoryType } from "../../types";
+import { TransactionType } from "../../types";
 
 @Schema()
 export class Category {
@@ -18,24 +18,32 @@ export class Category {
   @Prop({
     type: String,
     required: true,
+    enum: TransactionType,
   })
   @ApiProperty({
     description: "The type of the category.",
-    enum: CategoryType,
-    example: CategoryType.INCOME,
+    enum: TransactionType,
+    example: TransactionType.INCOME,
   })
-  type: CategoryType;
+  type: TransactionType;
 
   @Prop({
-    type: Number,
+    type: mongoose.Schema.Types.ObjectId,
     default: null,
+    validate: {
+      validator: function (value: number | null) {
+        return this.type !== TransactionType.EXPENSE ? value === null : true;
+      },
+      message: "Budget should only be set for expense categories.",
+    },
   })
   @ApiProperty({
-    description: `The budget of the category in VND. This only applies to expense categories, 
-      although it is not compulsory. For an income category, this field should always be null.`,
-    example: 1_000_000,
+    description: `The budget of the category. This only applies to expense categories, 
+      although it is not compulsory. For other categories, this field should always be null.`,
+    example: "664da67d075cdd1e0f0a9851",
+    default: null,
   })
-  budget: number;
+  budgetId: mongoose.Types.ObjectId;
 
   @Prop({
     type: mongoose.Schema.Types.ObjectId,
