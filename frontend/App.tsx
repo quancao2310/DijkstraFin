@@ -9,6 +9,7 @@ import BottomBarNavigation from "./src/navigation/BottomBarNavigation";
 // import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Provider } from "react-redux";
 import { store } from "./src/store";
+import { MenuProvider } from "react-native-popup-menu";
 import TestRedux from "./src/screens/TestRedux";
 import AllTransaction from "./src/screens/Home/AllTransaction";
 import HomeNavigation from "./src/navigation/HomeNavigation";
@@ -63,7 +64,9 @@ const App = () => {
 
   return (
     <Provider store={store}>
-      {!isOnboardingComplete ? onBoarding : mainScreen}
+      <MenuProvider>
+        {!isOnboardingComplete ? onBoarding : mainScreen}
+      </MenuProvider>
     </Provider>
   );
 };

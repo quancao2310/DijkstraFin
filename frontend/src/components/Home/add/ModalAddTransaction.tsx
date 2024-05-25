@@ -26,8 +26,9 @@ function formatDate(inputDate) {
   return formattedDate;
 }
 const ModalAddTransaction = (props: any) => {
+  const { isModalVisible, setIsModalVisible, moneySources } = props;
+
   const [money, setMoney] = useState(0);
-  const { isModalVisible, setIsModalVisible } = props;
   const [selected, setSelected] = useState("");
   const today = new Date();
   const startDate = getFormatedDate(
@@ -86,12 +87,10 @@ const ModalAddTransaction = (props: any) => {
     { key: "4", value: "Quà tặng" },
     { key: "5", value: "Học bổng" },
   ];
-  const dataAccountType = [
-    { key: "1", value: "Loại tài khoản", disabled: true },
-    { key: "2", value: "Ví điện tử MOMO" },
-    { key: "3", value: "Thẻ ngân hàng" },
-    { key: "4", value: "Thẻ tín dụng" },
-  ];
+  const dataAccountType = moneySources.map((source: any) => ({
+    key: source._id,
+    value: source.name,
+  }));
 
   return (
     <View>
@@ -108,7 +107,7 @@ const ModalAddTransaction = (props: any) => {
             borderTopLeftRadius: 30,
             borderTopRightRadius: 30,
             overflow: "hidden",
-            height: "70%",
+            height: "80%",
             marginTop: "auto",
             backgroundColor: "#fff",
             padding: 30,
@@ -258,7 +257,15 @@ const ModalAddTransaction = (props: any) => {
                   </View>
                 </TouchableOpacity>
               </View>
+              <View style={styles.group}>
+                <Text style={styles.label}>Tài khoản</Text>
 
+                <SelectList
+                  setSelected={(val) => setSelected(val)}
+                  data={dataAccountType}
+                  save="value"
+                />
+              </View>
               <TouchableOpacity onPress={() => onSubmit()} style={styles.btn}>
                 <Text
                   style={{ color: "#fff", fontWeight: "600", fontSize: 16 }}
