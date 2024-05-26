@@ -111,8 +111,8 @@ export class RecordsService {
     return record;
   }
 
-  async findByUserId(userId: string): Promise<Record[]> {
-    return this.recordModel.find({ userId }).sort({ _id: -1 }).exec();
+  async findByMoneySourceId(moneySourceId: string): Promise<Record[]> {
+    return this.recordModel.find({ moneySourceId }).sort({ _id: -1 }).exec();
   }
 
   async update(id: string, updateRecordDto: UpdateRecordDto): Promise<Record> {

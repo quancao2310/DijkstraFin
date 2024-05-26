@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { MoneySource } from "./schemas/money-source.schema";
+import { MoneySource, MoneySourceDocument } from "./schemas/money-source.schema";
 import { CreateMoneySourceDto } from "./dto/create-money-source.dto";
 import { UpdateMoneySourceDto } from "./dto/update-money-source.dto";
 
@@ -30,7 +30,7 @@ export class MoneySourcesService {
     return moneySource;
   }
 
-  async findByUserId(userId: string): Promise<MoneySource[]> {
+  async findByUserId(userId: string): Promise<MoneySourceDocument[]> {
     return this.moneySourceModel.find({ userId }).exec();
   }
 
