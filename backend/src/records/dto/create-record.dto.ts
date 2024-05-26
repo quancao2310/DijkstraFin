@@ -53,7 +53,7 @@ export class CreateRecordDto {
     description: "The ID of the category for this record.",
     example: "664f6a1b0eece94eab97ada0",
   })
-  category: string;
+  categoryId: string;
 
   @IsString()
   @IsNotEmpty()

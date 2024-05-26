@@ -1,12 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import {
-  IsEnum,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-} from "class-validator";
-import { CategoryType } from "../../types";
+import { IsEnum, IsNotEmpty, IsString } from "class-validator";
+import { TransactionType } from "../../types";
 
 export class CreateCategoryDto {
   @IsString()
@@ -17,25 +11,14 @@ export class CreateCategoryDto {
   })
   name: string;
 
-  @IsEnum(CategoryType)
+  @IsEnum(TransactionType)
   @IsNotEmpty()
   @ApiProperty({
-    description:
-      'The type of the category, which is either "income" or "expense".',
-    enum: CategoryType,
-    example: CategoryType.INCOME,
+    description: "The type of the category.",
+    enum: TransactionType,
+    example: TransactionType.INCOME,
   })
-  type: CategoryType;
-
-  @IsOptional()
-  @IsNumber()
-  @ApiProperty({
-    description: `The budget of the category in VND. This only applies to expense categories, 
-      although it is not compulsory. For an income category, this field should always be null.
-      The validation for this has not been setup yet. Please make sure to follow this.`,
-    example: 1_000_000,
-  })
-  budget?: number;
+  type: TransactionType;
 
   @IsString()
   @IsNotEmpty()

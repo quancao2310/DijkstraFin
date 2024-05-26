@@ -11,10 +11,16 @@ import { GoalsService } from "./goals.service";
 import { Goal } from "./schemas/goal.schema";
 import { CreateGoalDto } from "./dto/create-goal.dto";
 import { UpdateGoalDto } from "./dto/update-goal.dto";
-import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from "@nestjs/swagger";
 
 @Controller("goals")
 @ApiTags("Goals")
+@ApiBearerAuth()
 export class GoalsController {
   constructor(private readonly goalsService: GoalsService) {}
 
