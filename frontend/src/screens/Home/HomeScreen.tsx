@@ -18,6 +18,7 @@ import ModalAddTransaction from "../../components/Home/add/ModalAddTransaction";
 import CircleGraph from "../../components/Home/graph/CircleGraph";
 import TransactionCard from "../../components/Home/add/transaction/TransactionCard";
 import IconBudgetSystem from "../../icon/IconBugetSystem";
+import BudgetDetailCard from "../../components/Home/budget/BudgetDetailCard";
 
 const budgets = [
   { name: "restaurant", balance: 0 },
@@ -28,6 +29,28 @@ const budgets = [
   { name: "bill", balance: 0 },
   { name: "medication", balance: 0 },
   { name: "entertainment", balance: 0 },
+];
+const moneySources = [
+  {
+    _id: "664ebbacbb15d5d4a664d3a9",
+    name: "Ví điện tử Momo",
+    balance: 2000000,
+    userId: "664da67d075cdd1e0f0a9851",
+  },
+  {
+    _id: "664f5925eab4cf12bf675e44",
+    name: "Ngân hàng ABC",
+    balance: 1000000,
+    userId: "664da67d075cdd1e0f0a9851",
+    __v: 0,
+  },
+  {
+    _id: "664f6147eab08ab2cd75ad4d",
+    name: "Ngân hàng XYZ",
+    balance: 0,
+    userId: "664da67d075cdd1e0f0a9851",
+    __v: 0,
+  },
 ];
 
 const records = [
@@ -86,6 +109,17 @@ const records = [
     __v: 0,
   },
 ];
+const sample_budgets = [
+  {
+    _id: "664f5c4feab4cf12bf675e45",
+    name: "Ăn uống",
+    icon: IconBudgetSystem.restaurant,
+    type: "expense",
+    budget: 500000,
+    used: 50000,
+    userId: "664da67d075",
+  },
+];
 
 const HomeScreen = ({ navigation }: any) => {
   const [isAddBudgetModalVisible, setIsAddBudgetModalVisible] = useState(false);
@@ -134,6 +168,7 @@ const HomeScreen = ({ navigation }: any) => {
           </View>
           <ListCardBudget budgets={budgets} />
           <NoInfo name="ngân sách" />
+          <BudgetDetailCard budget={sample_budgets[0]} />
 
           <View style={styles.addBudget}>
             <Text style={{ fontSize: 20, fontWeight: "500" }}>Giao dịch</Text>
@@ -179,10 +214,12 @@ const HomeScreen = ({ navigation }: any) => {
           <ModalAddBudget
             isModalVisible={isAddBudgetModalVisible}
             setIsModalVisible={setIsAddBudgetModalVisible}
+            moneySources={moneySources}
           />
           <ModalAddTransaction
             isModalVisible={isAddTransactionModalVisible}
             setIsModalVisible={setIsAddTransactionModalVisible}
+            moneySources={moneySources}
           />
         </View>
       </ScrollView>

@@ -37,6 +37,18 @@ export class Goal {
   balance: number;
 
   @Prop({
+    type: Boolean,
+    required: true,
+    default: false,
+  })
+  @ApiProperty({
+    description: "The status of the goal. True if completed, false otherwise.",
+    example: false,
+    default: false,
+  })
+  isCompleted: boolean;
+
+  @Prop({
     type: Date,
     required: true,
   })
@@ -57,6 +69,16 @@ export class Goal {
   endDate: Date;
 
   @Prop({
+    type: String,
+    default: null,
+  })
+  @ApiProperty({
+    description: "The icon of the goal.",
+    example: "house",
+  })
+  icon: string;
+
+  @Prop({
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true,
@@ -66,6 +88,17 @@ export class Goal {
     example: "664da67d075cdd1e0f0a9851",
   })
   userId: mongoose.Types.ObjectId;
+
+  @Prop({
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "MoneySource",
+    required: true,
+  })
+  @ApiProperty({
+    description: "The ID of the money source this goal belongs to.",
+    example: "664da67d075cdd1e0f0a9851",
+  })
+  moneySourceId: mongoose.Types.ObjectId;
 }
 
 export type GoalDocument = mongoose.HydratedDocument<Goal>;

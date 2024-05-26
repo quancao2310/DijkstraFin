@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+
 import CardGoal from "../../components/Goal/goal/CardGoal";
 import IconBudgetSystem from "../../icon/IconBugetSystem";
 import IconGoalSystem from "../../icon/IconGoalSystem";
@@ -27,6 +28,28 @@ const goals = [
   { name: "furniture", balance: 0 },
   { name: "investment", balance: 0 },
   { name: "boat", balance: 0 },
+];
+const moneySources = [
+  {
+    _id: "664ebbacbb15d5d4a664d3a9",
+    name: "Ví điện tử Momo",
+    balance: 2000000,
+    userId: "664da67d075cdd1e0f0a9851",
+  },
+  {
+    _id: "664f5925eab4cf12bf675e44",
+    name: "Ngân hàng ABC",
+    balance: 1000000,
+    userId: "664da67d075cdd1e0f0a9851",
+    __v: 0,
+  },
+  {
+    _id: "664f6147eab08ab2cd75ad4d",
+    name: "Ngân hàng XYZ",
+    balance: 0,
+    userId: "664da67d075cdd1e0f0a9851",
+    __v: 0,
+  },
 ];
 
 const GoalScreen = () => {
@@ -94,10 +117,12 @@ const GoalScreen = () => {
           <ModalAddGoal
             isModalVisible={isAddBudgetModalVisible}
             setIsModalVisible={setIsAddBudgetModalVisible}
+            moneySources={moneySources}
           />
           <ModalAddTransaction
             isModalVisible={isAddTransactionModalVisible}
             setIsModalVisible={setIsAddTransactionModalVisible}
+            moneySources={moneySources}
           />
         </View>
       </ScrollView>

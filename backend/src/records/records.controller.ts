@@ -13,10 +13,17 @@ import { Record } from "./schemas/record.schema";
 import { TransactionType } from "../types/transactions.type";
 import { CreateRecordDto } from "./dto/create-record.dto";
 import { UpdateRecordDto } from "./dto/update-record.dto";
-import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from "@nestjs/swagger";
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiQuery,
+  ApiBearerAuth,
+} from "@nestjs/swagger";
 
 @Controller("records")
 @ApiTags("Records")
+@ApiBearerAuth()
 export class RecordsController {
   constructor(private readonly recordsService: RecordsService) {}
 
