@@ -1,15 +1,12 @@
-export enum GoalType {
-  SAVING = "saving",
-  BUDGET = "budget",
-}
-
 export type Goal = {
-  _id: string; // Will fix to id later
+  _id: string;
   name: string;
-  type: GoalType;
   total: number;
-  initialBalance: number;
   balance: number;
-  createdAt?: string;
-  updatedAt?: string;
+  isCompleted: boolean;
+  startDate: string;
+  endDate: string;
+  icon: string;
+  userId: string;
+  moneySourceId: string;
 };

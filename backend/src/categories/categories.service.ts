@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { Category } from "./schemas/category.schema";
+import { Category, CategoryDocument } from "./schemas/category.schema";
 import { CreateCategoryDto } from "./dto/create-category.dto";
 import { UpdateCategoryDto } from "./dto/update-category.dto";
 
@@ -28,7 +28,7 @@ export class CategoriesService {
     return category;
   }
 
-  async findByUserId(userId: string): Promise<Category[]> {
+  async findByUserId(userId: string): Promise<CategoryDocument[]> {
     return this.categoryModel.find({ userId }).exec();
   }
 

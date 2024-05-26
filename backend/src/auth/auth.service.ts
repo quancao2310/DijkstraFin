@@ -18,10 +18,7 @@ export class AuthService {
     private jwtService: JwtService
   ) {}
 
-  async signIn(
-    email: string,
-    password: string
-  ): Promise<AuthInfoDto> {
+  async signIn(email: string, password: string): Promise<AuthInfoDto> {
     const user = await this.usersService.findOne({ email: email });
     const isMatched = await this.comparePasswords(password, user.password);
     if (!isMatched) {

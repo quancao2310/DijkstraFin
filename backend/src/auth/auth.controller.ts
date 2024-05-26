@@ -35,9 +35,7 @@ export class AuthController {
     description:
       "Something wrong with the system so that it is currently unable to process your password.",
   })
-  async signIn(
-    @Body() signInDto: SignInDto
-  ): Promise<AuthInfoDto> {
+  async signIn(@Body() signInDto: SignInDto): Promise<AuthInfoDto> {
     return this.authService.signIn(signInDto.email, signInDto.password);
   }
 
@@ -59,9 +57,7 @@ export class AuthController {
     description:
       "Something wrong with the system so that it is currently unable to process your password.",
   })
-  async signUp(
-    @Body() signUpDto: CreateUserDto
-  ): Promise<AuthInfoDto> {
+  async signUp(@Body() signUpDto: CreateUserDto): Promise<AuthInfoDto> {
     return this.authService.signUp(signUpDto);
   }
 }
