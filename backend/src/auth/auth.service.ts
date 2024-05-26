@@ -9,6 +9,7 @@ import {
 import { UsersService } from "../users/users.service";
 import { JwtService } from "@nestjs/jwt";
 import { CreateUserDto } from "../users/dto/create-user.dto";
+import { AuthInfoDto } from "./dto/auth-info.dto";
 
 @Injectable()
 export class AuthService {
@@ -20,7 +21,7 @@ export class AuthService {
   async signIn(
     email: string,
     password: string
-  ): Promise<{ access_token: string }> {
+  ): Promise<AuthInfoDto> {
     const user = await this.usersService.findOne({ email: email });
     const isMatched = await this.comparePasswords(password, user.password);
     if (!isMatched) {
@@ -28,11 +29,12 @@ export class AuthService {
     }
     const payload = { sub: user.id, username: user.name };
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      accessToken: await this.jwtService.signAsync(payload),
+      userId: user.id,
     };
   }
 
-  async signUp(user: CreateUserDto): Promise<{ access_token: string }> {
+  async signUp(user: CreateUserDto): Promise<AuthInfoDto> {
     try {
       const lookup = await this.usersService.findOne({ email: user.email });
       if (lookup) {
@@ -46,7 +48,8 @@ export class AuthService {
     const userCreated = await this.usersService.create(newUser);
     const payload = { sub: userCreated.id, username: userCreated.name };
     return {
-      access_token: await this.jwtService.signAsync(payload),
+      accessToken: await this.jwtService.signAsync(payload),
+      userId: userCreated.id,
     };
   }
 

@@ -4,6 +4,7 @@ import { SignInDto } from "./dto/sign-in.dto";
 import { CreateUserDto } from "../users/dto/create-user.dto";
 import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { Public } from "./public.decorator";
+import { AuthInfoDto } from "./dto/auth-info.dto";
 
 @Controller("auth")
 @Public()
@@ -19,7 +20,7 @@ export class AuthController {
   @ApiResponse({
     status: 200,
     description: "User logged in successfully",
-    type: Object,
+    type: AuthInfoDto,
   })
   @ApiResponse({
     status: 404,
@@ -36,7 +37,7 @@ export class AuthController {
   })
   async signIn(
     @Body() signInDto: SignInDto
-  ): Promise<{ access_token: string }> {
+  ): Promise<AuthInfoDto> {
     return this.authService.signIn(signInDto.email, signInDto.password);
   }
 
@@ -47,7 +48,7 @@ export class AuthController {
   @ApiResponse({
     status: 201,
     description: "User signed up successfully",
-    type: Object,
+    type: AuthInfoDto,
   })
   @ApiResponse({
     status: 400,
@@ -60,7 +61,7 @@ export class AuthController {
   })
   async signUp(
     @Body() signUpDto: CreateUserDto
-  ): Promise<{ access_token: string }> {
+  ): Promise<AuthInfoDto> {
     return this.authService.signUp(signUpDto);
   }
 }
