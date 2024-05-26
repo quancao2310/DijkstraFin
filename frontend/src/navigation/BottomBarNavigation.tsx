@@ -10,6 +10,7 @@ import {
 import WalletScreen from "../screens/Wallet/WalletScreen";
 import ColorSystem from "../color/ColorSystem";
 import GoalScreen from "../screens/Goal/GoalScreen";
+import StatisticScreen from "../screens/Statistic/StatisticScreen";
 const Tab = createBottomTabNavigator();
 export default function BottomBarNavigation() {
   return (
@@ -68,7 +69,7 @@ export default function BottomBarNavigation() {
       />
       <Tab.Screen
         name="Thống kê"
-        component={TempScreen}
+        component={StatisticScreen}
         options={{
           headerShown: false,
           tabBarIcon: (props) => (
