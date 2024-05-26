@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   StatusBar,
   View,
@@ -13,32 +14,47 @@ import {
 import CheckBox from "expo-checkbox";
 import Icon from "@expo/vector-icons/Fontisto";
 import ColorSystem from "../../color/ColorSystem";
+import { stateIsLogin } from "../../store/reducers/login.reducer";
+import { usePostLoginMutation } from "../../services/auth";
+
 const LoginScreen = () => {
   const [isCheck, setIsCheck] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [checkMail, setCheckMail] = useState(true);
   const [errorPass, setErrorPass] = useState("");
-
-  const onSubmit = () => {
+  const dispatch = useDispatch();
+  let [login, { isLoading }] = usePostLoginMutation();
+  const onSubmit = async () => {
     let formData = {
-      _email: email,
-      _password: password,
-      _checkBox: isCheck,
+      email: email,
+      password: password,
     };
     console.log(formData);
     let regexEmail = new RegExp(
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     );
-    console.log(regexEmail.test(email.toLowerCase()));
+    // console.log(regexEmail.test(email.toLowerCase()));
     if (!regexEmail.test(email.toLowerCase())) {
       setCheckMail(false);
     } else {
       setCheckMail(true);
     }
-    formData._password === ""
+    formData.password === ""
       ? setErrorPass("Password cannot be empty")
       : setErrorPass("");
+
+    try {
+      console.log("login");
+
+      const authInfo = await login(formData).unwrap();
+      console.log(authInfo);
+      console.log(123);
+    } catch (error) {
+      console.log(error);
+    }
+
+    // dispatch(stateIsLogin());
   };
   return (
     <SafeAreaView style={styles.container}>
