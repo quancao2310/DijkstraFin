@@ -103,7 +103,7 @@ export class UsersController {
     }
     return budgets;
   }
-  
+
   @ApiOperation({ summary: "Get all money sources of a user by userId" })
   @ApiResponse({
     status: 200,
@@ -174,9 +174,11 @@ export class UsersController {
   @Get(":id/records")
   async findAllRecord(@Param("id") id: string): Promise<Record[]> {
     const moneySources = await this.moneySourcesService.findByUserId(id);
-    let records : Record[] = [];
-    for (let moneySource of moneySources) {
-      const record = await this.recordsService.findByMoneySourceId(moneySource.id)
+    let records: Record[] = [];
+    for (const moneySource of moneySources) {
+      const record = await this.recordsService.findByMoneySourceId(
+        moneySource.id
+      );
       records = records.concat(record);
     }
     return records;

@@ -1,7 +1,10 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { MoneySource, MoneySourceDocument } from "./schemas/money-source.schema";
+import {
+  MoneySource,
+  MoneySourceDocument,
+} from "./schemas/money-source.schema";
 import { CreateMoneySourceDto } from "./dto/create-money-source.dto";
 import { UpdateMoneySourceDto } from "./dto/update-money-source.dto";
 

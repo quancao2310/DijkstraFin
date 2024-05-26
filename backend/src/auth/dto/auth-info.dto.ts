@@ -9,7 +9,7 @@ export class AuthInfoDto {
 
   @ApiProperty({
     description: "ID of the user",
-    example: "664f6a1b0eece94eab97ada0"
+    example: "664f6a1b0eece94eab97ada0",
   })
   userId: string;
 }
