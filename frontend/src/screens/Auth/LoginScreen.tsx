@@ -46,15 +46,13 @@ const LoginScreen = () => {
 
     try {
       console.log("login");
-
       const authInfo = await login(formData).unwrap();
       console.log(authInfo);
-      console.log(123);
+      console.log("success");
+      dispatch(stateIsLogin());
     } catch (error) {
       console.log(error);
     }
-
-    // dispatch(stateIsLogin());
   };
   return (
     <SafeAreaView style={styles.container}>
@@ -131,7 +129,7 @@ const LoginScreen = () => {
                     value={isCheck}
                     onValueChange={() => setIsCheck(!isCheck)}
                   />
-                  <Text style={{ marginLeft: 6 }}>Remember password</Text>
+                  <Text style={{ marginLeft: 6 }}>Ghi nhớ đăng nhập</Text>
                 </View>
                 <View>
                   <TouchableOpacity
@@ -139,7 +137,7 @@ const LoginScreen = () => {
                       Alert.alert("Quen mat khau");
                     }}
                   >
-                    <Text style={{ color: "#0386D0" }}>Forgot password?</Text>
+                    <Text style={{ color: "#0386D0" }}>Quên mật khẩu?</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -147,7 +145,7 @@ const LoginScreen = () => {
                 <Text
                   style={{ color: "#fff", fontWeight: "600", fontSize: 16 }}
                 >
-                  Login
+                  Đăng nhập
                 </Text>
               </TouchableOpacity>
             </View>
