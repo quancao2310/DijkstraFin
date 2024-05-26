@@ -13,6 +13,7 @@ import { MenuProvider } from "react-native-popup-menu";
 import TestRedux from "./src/screens/TestRedux";
 import AllTransaction from "./src/screens/Home/AllTransaction";
 import HomeNavigation from "./src/navigation/HomeNavigation";
+import LoginScreen from "./src/screens/Auth/LoginScreen";
 
 const Stack = createStackNavigator();
 
@@ -33,6 +34,7 @@ const App = () => {
 
   // this is temp for testing
   const [isOnboardingComplete, setIsOnboardingComplete] = React.useState(true);
+  const [isLogin, setIsLogin] = React.useState(false);
   const handleOnboardingComplete = () => {
     setIsOnboardingComplete(true);
   };
@@ -42,6 +44,18 @@ const App = () => {
       <Stack.Navigator screenOptions={{ headerShown: true }}>
         <Stack.Screen name="LogoOnboarding" component={LogoOnboarding} />
         <Stack.Screen name="OnboardingScreen" component={OnboardingScreen} />
+        <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        <Stack.Screen name="HomeScreen" component={HomeScreen} />
+        <Stack.Screen name="AllTransaction" component={AllTransaction} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+  const loginScreen = (
+    <NavigationContainer>
+      <Stack.Navigator screenOptions={{ headerShown: true }}>
+        <Stack.Screen name="LogoOnboarding" component={LogoOnboarding} />
+        <Stack.Screen name="OnboardingScreen" component={OnboardingScreen} />
+        <Stack.Screen name="LoginScreen" component={LoginScreen} />
         <Stack.Screen name="HomeScreen" component={HomeScreen} />
         <Stack.Screen name="AllTransaction" component={AllTransaction} />
       </Stack.Navigator>
@@ -65,7 +79,11 @@ const App = () => {
   return (
     <Provider store={store}>
       <MenuProvider>
-        {!isOnboardingComplete ? onBoarding : mainScreen}
+        {!isOnboardingComplete
+          ? onBoarding
+          : isLogin
+          ? loginScreen
+          : mainScreen}
       </MenuProvider>
     </Provider>
   );
