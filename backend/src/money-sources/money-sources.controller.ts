@@ -11,10 +11,16 @@ import { MoneySourcesService } from "./money-sources.service";
 import { MoneySource } from "./schemas/money-source.schema";
 import { CreateMoneySourceDto } from "./dto/create-money-source.dto";
 import { UpdateMoneySourceDto } from "./dto/update-money-source.dto";
-import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from "@nestjs/swagger";
 
 @Controller("money-sources")
 @ApiTags("Money Sources")
+@ApiBearerAuth()
 export class MoneySourcesController {
   constructor(private readonly moneySourceService: MoneySourcesService) {}
 

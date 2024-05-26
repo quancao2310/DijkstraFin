@@ -11,10 +11,16 @@ import { BudgetsService } from "./budgets.service";
 import { Budget } from "./schemas/budget.schema";
 import { CreateBudgetDto } from "./dto/create-budget.dto";
 import { UpdateBudgetDto } from "./dto/update-budget.dto";
-import { ApiTags, ApiOperation, ApiResponse } from "@nestjs/swagger";
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiBearerAuth,
+} from "@nestjs/swagger";
 
 @Controller("budgets")
 @ApiTags("Budgets")
+@ApiBearerAuth()
 export class BudgetsController {
   constructor(private readonly budgetsService: BudgetsService) {}
 
