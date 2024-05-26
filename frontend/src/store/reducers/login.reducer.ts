@@ -16,8 +16,10 @@ const LoginStatusSlice = createSlice({
   name: "LoginStatus",
   initialState: initialState,
   reducers: {
-    stateIsLogin: (state, action: PayloadAction<string>) => {
-      state.isLogin = true;
+    stateIsLogin: (state, action: PayloadAction<LoginStatusState>) => {
+      state.isLogin = action.payload.isLogin;
+      state.accessToken = action.payload.accessToken;
+      state.userId = action.payload.userId;
     },
     logOut: (state, action: PayloadAction<string>) => {
       state.isLogin = false;

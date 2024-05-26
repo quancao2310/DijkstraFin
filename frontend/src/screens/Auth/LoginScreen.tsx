@@ -49,7 +49,13 @@ const LoginScreen = () => {
       const authInfo = await login(formData).unwrap();
       console.log(authInfo);
       console.log("success");
-      dispatch(stateIsLogin());
+      dispatch(
+        stateIsLogin({
+          isLogin: true,
+          accessToken: authInfo.accessToken,
+          userId: authInfo.userId,
+        })
+      );
     } catch (error) {
       console.log(error);
     }
