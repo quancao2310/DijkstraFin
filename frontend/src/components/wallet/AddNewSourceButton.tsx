@@ -1,10 +1,10 @@
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
 import { FontAwesome6 } from "@expo/vector-icons";
 import ColorSystem from "../../color/ColorSystem";
 import { stateToggle } from "../../store/reducers/addMoneySrcModal.reducer";
+import { useAppDispatch } from "../../hooks/redux";
 const AddNewSourceButton = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   return (
     <View>
       <TouchableOpacity
