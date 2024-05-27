@@ -1,3 +1,4 @@
+// auth.ts
 import { apiSlice } from ".";
 
 export const authApiSlice = apiSlice.injectEndpoints({
@@ -9,7 +10,14 @@ export const authApiSlice = apiSlice.injectEndpoints({
         body: body,
       }),
     }),
+    postRegister: builder.mutation({
+      query: (body) => ({
+        url: "/auth/signup",
+        method: "POST",
+        body: body,
+      }),
+    }),
   }),
 });
 
-export const { usePostLoginMutation } = authApiSlice;
+export const { usePostLoginMutation, usePostRegisterMutation } = authApiSlice;

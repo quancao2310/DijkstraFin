@@ -12,6 +12,7 @@ import { RootState } from "../store/index";
 import { MenuProvider } from "react-native-popup-menu";
 import AllTransaction from "../screens/Home/AllTransaction";
 import LoginScreen from "../screens/Auth/LoginScreen";
+import RegisterScreen from "../screens/Auth/RegisterScreen";
 const Stack = createStackNavigator();
 
 const AppMenuProvider = () => {
@@ -36,7 +37,7 @@ const AppMenuProvider = () => {
   const isLogin = useSelector((state: RootState) => state.LoginStatus.isLogin);
   const onBoarding = isAppFirstLaunched != null && (
     <NavigationContainer>
-      <Stack.Navigator screenOptions={{ headerShown: true }}>
+      <Stack.Navigator screenOptions={{ headerShown: false }}>
         {isAppFirstLaunched && (
           <>
             <Stack.Screen name="LogoOnboarding" component={LogoOnboarding} />
@@ -47,7 +48,10 @@ const AppMenuProvider = () => {
           </>
         )}
         {!isLogin && (
-          <Stack.Screen name="LoginScreen" component={LoginScreen} />
+          <>
+            <Stack.Screen name="LoginScreen" component={LoginScreen} />
+            <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+          </>
         )}
         <Stack.Screen name="HomeScreen" component={HomeScreen} />
         <Stack.Screen name="AllTransaction" component={AllTransaction} />

@@ -1,5 +1,5 @@
 import { FontAwesome6 } from "@expo/vector-icons";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import IconBudgetSystem from "../../../icon/IconBugetSystem";
 import ColorSystem from "../../../color/ColorSystem";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
@@ -66,6 +66,7 @@ function formatDate(isoString) {
 const BudgetDetailCard = ({ budget }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [updatedBudget, setUpdatedBudget] = useState(0);
+
   return (
     <>
       <View style={styles.container}>
@@ -77,9 +78,9 @@ const BudgetDetailCard = ({ budget }) => {
         >
           <View style={{ flexDirection: "row", alignItems: "center" }}>
             <MaterialIcons
-              name={budget.icon.name}
+              name={IconBudgetSystem[budget.name].name}
               size={32}
-              color={budget.icon.color}
+              color={IconBudgetSystem[budget.name].color}
             />
             <Text style={{ fontSize: 18, paddingLeft: 15 }}>{budget.name}</Text>
           </View>
@@ -143,8 +144,8 @@ const BudgetDetailCard = ({ budget }) => {
         </View>
         <View style={{ width: "100%" }}>
           <Progress.Bar
-            progress={budget.used / budget.budget}
-            color={budget.icon.color}
+            progress={budget.used / budget.balance}
+            color={IconBudgetSystem[budget.name].color}
             width={null}
             borderWidth={0}
             unfilledColor={"#DEDDDD"}
@@ -164,7 +165,7 @@ const BudgetDetailCard = ({ budget }) => {
               Ngân sách hàng tháng
             </Text>
             <Text style={{ fontSize: 16 }}>
-              {formatCurrency(budget.budget)}
+              {formatCurrency(budget.balance)}
             </Text>
           </View>
         </View>
