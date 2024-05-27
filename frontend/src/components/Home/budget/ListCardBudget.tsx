@@ -19,8 +19,8 @@ const ListCardBudget = (data: props) => {
           <>
             <View style={{ width: 90 }}>
               <CardBudget
-                icon={IconBudgetSystem[String(data.budgets[index].name)]}
-                balance={0}
+                icon={IconBudgetSystem[String(item.name)]}
+                balance={item?.hasOwnProperty("balance") ? item.balance : 0}
               />
             </View>
           </>

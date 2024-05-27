@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   SafeAreaView,
   ScrollView,
@@ -19,16 +19,18 @@ import CircleGraph from "../../components/Home/graph/CircleGraph";
 import TransactionCard from "../../components/Home/add/transaction/TransactionCard";
 import IconBudgetSystem from "../../icon/IconBugetSystem";
 import BudgetDetailCard from "../../components/Home/budget/BudgetDetailCard";
+import { useGetCategoriesQuery } from "../../services/categories";
+import { useGetBudgetsQuery } from "../../services/budgets";
 
-const budgets = [
-  { name: "restaurant", balance: 0 },
-  { name: "grocery", balance: 0 },
-  { name: "transport", balance: 0 },
-  { name: "cloth", balance: 0 },
-  { name: "beauty", balance: 0 },
-  { name: "bill", balance: 0 },
-  { name: "medication", balance: 0 },
-  { name: "entertainment", balance: 0 },
+const budgetsApi = [
+  { name: "Ăn uống", balance: 0 },
+  { name: "Mua sắm", balance: 0 },
+  { name: "Di chuyển", balance: 0 },
+  { name: "Quần áo", balance: 0 },
+  { name: "Làm đẹp", balance: 0 },
+  { name: "Hóa đơn", balance: 0 },
+  { name: "Sức khỏe", balance: 0 },
+  { name: "Giải trí", balance: 0 },
 ];
 const moneySources = [
   {
@@ -125,6 +127,13 @@ const HomeScreen = ({ navigation }: any) => {
   const [isAddBudgetModalVisible, setIsAddBudgetModalVisible] = useState(false);
   const [isAddTransactionModalVisible, setIsAddTransactionModalVisible] =
     useState(false);
+
+  const { data: categories, isLoading } = useGetCategoriesQuery();
+  const { data: budgets } = useGetBudgetsQuery();
+
+  const [budgetCategories, setBudgetCategories] = useState([]);
+  const [budgetsInfo, setBudgetsInfo] = useState([]);
+
   const handleAddBudget = () => {
     setIsAddBudgetModalVisible(true);
   };
@@ -134,96 +143,178 @@ const HomeScreen = ({ navigation }: any) => {
   const handleViewAllTransactions = () => {
     navigation.navigate("AllTransaction", { data: records });
   };
+  const preprocessBudgetCategories = () => {
+    const expenseCategories = categories.filter(
+      (category) => category.type === "expense"
+    );
+    const sortedCategories = [...expenseCategories].sort((a, b) => {
+      if (a.budgetId === null && b.budgetId !== null) {
+        return 1; // If a's budgetId is null and b's is not, b comes first
+      } else if (a.budgetId !== null && b.budgetId === null) {
+        return -1; // If a's budgetId is not null and b's is null, a comes first
+      } else {
+        return 0; // Otherwise, maintain the current order
+      }
+    });
+
+    const categoriesWithUpdatedBalance = sortedCategories.map((category) => {
+      if (category.budgetId !== null) {
+        const matchingBudget = budgets.find(
+          (budget) => budget._id === category.budgetId
+        );
+        if (matchingBudget) {
+          return {
+            ...category,
+            balance: matchingBudget.amount,
+            used: matchingBudget.currentSpent,
+          };
+        }
+      }
+      return category;
+    });
+
+    const budgetsFullInfo = categoriesWithUpdatedBalance.filter(
+      (category) => category.budgetId !== null
+    );
+
+    setBudgetsInfo(budgetsFullInfo);
+    setBudgetCategories(categoriesWithUpdatedBalance);
+  };
+
+  useEffect(() => {
+    if (categories && budgets) {
+      preprocessBudgetCategories();
+    }
+  }, [categories, budgets]);
 
   return (
-    <SafeAreaView
-      style={[
-        styles.container,
-        isAddBudgetModalVisible || isAddTransactionModalVisible
-          ? { backgroundColor: "rgba(0,0,0,0.3)" }
-          : { backgroundColor: "#fff" },
-      ]}
-    >
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        showsHorizontalScrollIndicator={false}
-      >
-        <View style={styles.containerview}>
-          <CircleGraph />
-          <View style={styles.addBudget}>
-            <Text style={{ fontSize: 20, fontWeight: "500" }}>Ngân sách</Text>
-            <TouchableOpacity
-              style={styles.buttonAddBudget}
-              onPress={handleAddBudget}
-            >
-              <MaterialIcons
-                name="add"
-                size={25}
-                color={ColorSystem.secondary[600]}
-              />
-              <Text style={{ fontSize: 18, color: ColorSystem.secondary[600] }}>
-                Thêm
-              </Text>
-            </TouchableOpacity>
-          </View>
-          <ListCardBudget budgets={budgets} />
-          <NoInfo name="ngân sách" />
-          <BudgetDetailCard budget={sample_budgets[0]} />
+    <>
+      {categories && budgets && !isLoading && (
+        <SafeAreaView
+          style={[
+            styles.container,
+            isAddBudgetModalVisible || isAddTransactionModalVisible
+              ? { backgroundColor: "rgba(0,0,0,0.3)" }
+              : { backgroundColor: "#fff" },
+          ]}
+        >
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
+          >
+            <View style={styles.containerview}>
+              <CircleGraph />
+              <View style={styles.addBudget}>
+                <Text style={{ fontSize: 20, fontWeight: "500" }}>
+                  Ngân sách
+                </Text>
+                <TouchableOpacity
+                  style={styles.buttonAddBudget}
+                  onPress={handleAddBudget}
+                >
+                  <MaterialIcons
+                    name="add"
+                    size={25}
+                    color={ColorSystem.secondary[600]}
+                  />
+                  <Text
+                    style={{ fontSize: 18, color: ColorSystem.secondary[600] }}
+                  >
+                    Thêm
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              <ListCardBudget budgets={budgetCategories} />
 
-          <View style={styles.addBudget}>
-            <Text style={{ fontSize: 20, fontWeight: "500" }}>Giao dịch</Text>
-            <TouchableOpacity
-              style={styles.buttonAddBudget}
-              onPress={handleAddTransaction}
-            >
-              <MaterialIcons
-                name="add"
-                size={25}
-                color={ColorSystem.secondary[600]}
+              {(!budgetsInfo || budgetsInfo.length === 0) && (
+                <NoInfo name="ngân sách" />
+              )}
+              {budgetsInfo &&
+                budgetsInfo.length > 0 &&
+                budgetsInfo.map((item, index) => {
+                  return <BudgetDetailCard key={index} budget={item} />;
+                })}
+              {budgetsInfo && budgetsInfo.length > 3 && (
+                <TouchableOpacity
+                  style={{
+                    paddingTop: 15,
+                    paddingBottom: 30,
+                    alignItems: "center",
+                  }}
+                  onPress={handleViewAllTransactions}
+                >
+                  <Text
+                    style={{
+                      color: ColorSystem.secondary[600],
+                      fontSize: 16,
+                    }}
+                  >
+                    Xem tất cả
+                  </Text>
+                </TouchableOpacity>
+              )}
+              <View style={styles.addBudget}>
+                <Text style={{ fontSize: 20, fontWeight: "500" }}>
+                  Giao dịch
+                </Text>
+                <TouchableOpacity
+                  style={styles.buttonAddBudget}
+                  onPress={handleAddTransaction}
+                >
+                  <MaterialIcons
+                    name="add"
+                    size={25}
+                    color={ColorSystem.secondary[600]}
+                  />
+                  <Text
+                    style={{ fontSize: 18, color: ColorSystem.secondary[600] }}
+                  >
+                    Thêm
+                  </Text>
+                </TouchableOpacity>
+              </View>
+              {(!records || records.length === 0) && (
+                <NoInfo name="giao dịch" />
+              )}
+              {records &&
+                records.length > 0 &&
+                records.map((item, index) => {
+                  return <TransactionCard record={item} key={index} />;
+                })}
+              {records && records.length > 3 && (
+                <TouchableOpacity
+                  style={{
+                    paddingTop: 15,
+                    paddingBottom: 30,
+                    alignItems: "center",
+                  }}
+                  onPress={handleViewAllTransactions}
+                >
+                  <Text
+                    style={{
+                      color: ColorSystem.secondary[600],
+                      fontSize: 16,
+                    }}
+                  >
+                    Xem tất cả
+                  </Text>
+                </TouchableOpacity>
+              )}
+              <ModalAddBudget
+                isModalVisible={isAddBudgetModalVisible}
+                setIsModalVisible={setIsAddBudgetModalVisible}
+                moneySources={moneySources}
               />
-              <Text style={{ fontSize: 18, color: ColorSystem.secondary[600] }}>
-                Thêm
-              </Text>
-            </TouchableOpacity>
-          </View>
-          {(!records || records.length === 0) && <NoInfo name="giao dịch" />}
-          {records &&
-            records.length > 0 &&
-            records.map((item, index) => {
-              return <TransactionCard record={item} key={index} />;
-            })}
-          {records && records.length > 3 && (
-            <TouchableOpacity
-              style={{
-                paddingTop: 15,
-                paddingBottom: 30,
-                alignItems: "center",
-              }}
-              onPress={handleViewAllTransactions}
-            >
-              <Text
-                style={{
-                  color: ColorSystem.secondary[600],
-                  fontSize: 16,
-                }}
-              >
-                Xem tất cả
-              </Text>
-            </TouchableOpacity>
-          )}
-          <ModalAddBudget
-            isModalVisible={isAddBudgetModalVisible}
-            setIsModalVisible={setIsAddBudgetModalVisible}
-            moneySources={moneySources}
-          />
-          <ModalAddTransaction
-            isModalVisible={isAddTransactionModalVisible}
-            setIsModalVisible={setIsAddTransactionModalVisible}
-            moneySources={moneySources}
-          />
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+              <ModalAddTransaction
+                isModalVisible={isAddTransactionModalVisible}
+                setIsModalVisible={setIsAddTransactionModalVisible}
+                moneySources={moneySources}
+              />
+            </View>
+          </ScrollView>
+        </SafeAreaView>
+      )}
+    </>
   );
 };
 

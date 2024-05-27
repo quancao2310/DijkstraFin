@@ -27,7 +27,9 @@ const CardBudget = (data: props) => {
           color={data.icon.color}
         />
         <Text style={styles.title}>{data.icon.title}</Text>
-        <Text style={styles.balance}>{data.balance} VND</Text>
+        <Text style={styles.balance}>
+          {data.balance === 0 ? "0 VND" : `${Math.round(data.balance / 1000)}k`}
+        </Text>
       </View>
     </>
   );

@@ -10,14 +10,21 @@ import {
   Alert,
   TextInput,
   Image,
+  Dimensions,
 } from "react-native";
 import CheckBox from "expo-checkbox";
+import Footer from "../../images/FooterLogin.png";
 import Icon from "@expo/vector-icons/Fontisto";
 import ColorSystem from "../../color/ColorSystem";
 import { stateIsLogin } from "../../store/reducers/login.reducer";
 import { usePostLoginMutation } from "../../services/auth";
+import { useNavigation } from "@react-navigation/native";
 
-const LoginScreen = () => {
+const imageAspectRatio = 414 / 218;
+const scaleWidth = Dimensions.get("window").width;
+const scaleHeight = scaleWidth / imageAspectRatio;
+
+const LoginScreen = ({ navigation }: any) => {
   const [isCheck, setIsCheck] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -34,7 +41,8 @@ const LoginScreen = () => {
     let regexEmail = new RegExp(
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     );
-    // console.log(regexEmail.test(email.toLowerCase()));
+    console.log(regexEmail.test(email.toLowerCase()));
+
     if (!regexEmail.test(email.toLowerCase())) {
       setCheckMail(false);
     } else {
@@ -43,12 +51,20 @@ const LoginScreen = () => {
     formData.password === ""
       ? setErrorPass("Password cannot be empty")
       : setErrorPass("");
+    console.log(checkMail);
+
+    if (
+      checkMail === false ||
+      formData.email === "" ||
+      formData.password === ""
+    ) {
+      return;
+    }
 
     try {
       console.log("login");
       const authInfo = await login(formData).unwrap();
       console.log(authInfo);
-      console.log("success");
       dispatch(
         stateIsLogin({
           isLogin: true,
@@ -57,6 +73,7 @@ const LoginScreen = () => {
         })
       );
     } catch (error) {
+      Alert.alert("Login failed", error.data.message);
       console.log(error);
     }
   };
@@ -107,7 +124,7 @@ const LoginScreen = () => {
                 <TextInput
                   style={styles.input}
                   autoCapitalize="none"
-                  placeholder="Username/Email"
+                  placeholder="Email"
                   onChangeText={(value) => setEmail(value)}
                 ></TextInput>
                 {!checkMail && (
@@ -154,20 +171,46 @@ const LoginScreen = () => {
                   Đăng nhập
                 </Text>
               </TouchableOpacity>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("RegisterScreen")}
+                style={styles.btnRegister}
+              >
+                <Text
+                  style={{ color: "#fff", fontWeight: "300", fontSize: 16 }}
+                >
+                  Chưa có tài khoản?
+                </Text>
+                <Text
+                  style={{ color: "#fff", fontWeight: "600", fontSize: 16 }}
+                >
+                  {" "}
+                  Đăng ký ngay
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
         </View>
       </View>
-      <Text>Email: {email}</Text>
-      <Text>Password: {password}</Text>
-      <Text>Remember: {isCheck ? "true" : "false"}</Text>
-      <View>{/* <Image style={{ width: "100%" }} source={Footer} /> */}</View>
+
+      <Image
+        style={{
+          zIndex: -1,
+          //   backgroundColor: "cyan",
+          position: "absolute",
+          bottom: -200,
+          width: scaleWidth,
+          height: undefined,
+          aspectRatio: 0.9,
+        }}
+        source={Footer}
+      />
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    zIndex: 1000,
     backgroundColor: "#fff",
     flex: 1,
     justifyContent: "space-between",
@@ -199,6 +242,14 @@ const styles = StyleSheet.create({
     backgroundColor: ColorSystem.primary[800],
     paddingVertical: 15,
     alignItems: "center",
+    borderRadius: 10,
+  },
+  btnRegister: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 30,
+    backgroundColor: ColorSystem.secondary[800],
+    paddingVertical: 15,
     borderRadius: 10,
   },
 
