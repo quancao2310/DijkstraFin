@@ -1,4 +1,4 @@
-export * from "./auth-info.type";
+export * from "./auth.type";
 export * from "./user.type";
 export * from "./category.type";
 export * from "./budget.type";

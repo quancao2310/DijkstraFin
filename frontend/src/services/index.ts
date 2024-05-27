@@ -7,9 +7,6 @@ export const apiSlice = createApi({
     prepareHeaders: (headers, { getState }) => {
       const state = getState() as RootState;
       const token = state.LoginStatus.accessToken;
-
-      console.log(token);
-
       if (token) {
         headers.set("Authorization", `Bearer ${token}`);
       }
@@ -17,5 +14,6 @@ export const apiSlice = createApi({
       return headers;
     },
   }),
+  tagTypes: ["MoneySource"],
   endpoints: () => ({}),
 });
