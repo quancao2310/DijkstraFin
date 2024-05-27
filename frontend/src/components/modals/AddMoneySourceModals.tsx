@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Alert,
   Modal,
@@ -9,17 +9,33 @@ import {
   View,
   TextInput,
 } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { stateToggle } from "../../store/reducers/addMoneySrcModal.reducer";
 import ColorSystem from "../../color/ColorSystem";
 import { MaterialIcons } from "@expo/vector-icons";
+import { useAppDispatch, useAppSelector } from "../../hooks/redux";
+import { useCreateMoneySourceMutation } from "../../services/moneySources";
 
 const AddMoneySrcModal = () => {
-  const dispatch = useDispatch();
-  const modalVisible = useSelector(
+  const dispatch = useAppDispatch();
+  const modalVisible = useAppSelector(
     (state: RootState) => state.AddMoneySrcModal.visible
   );
+  const [name, setName] = useState("");
+  const [balance, setBalance] = useState("");
+  const [createMoneySource] = useCreateMoneySourceMutation();
+
+  const handleCreate = async () => {
+    try {
+      await createMoneySource({ name, balance: parseFloat(balance) }).unwrap();
+      dispatch(stateToggle()); // Close the modal on success
+      setName(""); // Clear the inputs
+      setBalance("");
+    } catch (error) {
+      console.error("Failed to create money source:", error);
+    }
+  };
+
   return (
     <Modal
       animationType="slide"
@@ -47,8 +63,15 @@ const AddMoneySrcModal = () => {
             <View style={{ marginTop: 4, marginEnd: 2 }}>
               <MaterialIcons name="monetization-on" size={18} color="black" />
             </View>
-            <TextInput style={styles.input} />
-            <TouchableOpacity style={{ marginTop: 4, marginEnd: 2 }}>
+            <TextInput
+              style={styles.input}
+              value={name}
+              onChangeText={setName}
+            />
+            <TouchableOpacity
+              style={{ marginTop: 4, marginEnd: 2 }}
+              onPress={() => setName("")}
+            >
               <Text>x</Text>
             </TouchableOpacity>
           </View>
@@ -57,12 +80,23 @@ const AddMoneySrcModal = () => {
             <View style={{ marginTop: 4, marginEnd: 2 }}>
               <MaterialIcons name="balance" size={18} color="black" />
             </View>
-            <TextInput style={styles.input} />
-            <TouchableOpacity style={{ marginTop: 4, marginEnd: 2 }}>
+            <TextInput
+              style={styles.input}
+              value={balance}
+              onChangeText={setBalance}
+              keyboardType="numeric"
+            />
+            <TouchableOpacity
+              style={{ marginTop: 4, marginEnd: 2 }}
+              onPress={() => setBalance("")}
+            >
               <Text>x</Text>
             </TouchableOpacity>
           </View>
-          <TouchableOpacity style={[styles.button, styles.buttonClose]}>
+          <TouchableOpacity
+            style={[styles.button, styles.buttonClose]}
+            onPress={handleCreate}
+          >
             <Text
               style={{ color: ColorSystem.neutral[100], textAlign: "center" }}
             >
