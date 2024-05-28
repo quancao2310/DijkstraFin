@@ -6,6 +6,7 @@ import {
   StyleSheet,
   View,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import DateFilterButton from "../../components/utils/DateFilterButton";
 import MoneySource from "../../components/wallet/MoneySource";
@@ -33,7 +34,7 @@ export default function WalletScreen() {
         <DateFilterButton />
         <View style={styles.innerScroll}>
           <ScrollView nestedScrollEnabled={true}>
-            {isLoading && <Text>Loading...</Text>}
+            {isLoading && <ActivityIndicator></ActivityIndicator>}
             {moneySources &&
               moneySources.map((item) => (
                 <MoneySource
