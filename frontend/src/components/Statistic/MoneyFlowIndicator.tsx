@@ -4,7 +4,7 @@ import ColorSystem from "../../color/ColorSystem";
 
 interface MoneyFlowIndicatorProps {
   label: string;
-  amount: string;
+  amount: number;
   percent: number;
   color: string;
 }
