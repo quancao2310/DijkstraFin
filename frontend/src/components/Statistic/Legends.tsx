@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   labelText: {
-    fontSize: 16,
+    fontSize: 12,
   },
 });
 
