@@ -53,8 +53,6 @@ function formatDate(isoString) {
 }
 
 const TransactionCard = (data: props) => {
-  console.log(data);
-  return <></>;
   return (
     <>
       <View style={styles.container}>
