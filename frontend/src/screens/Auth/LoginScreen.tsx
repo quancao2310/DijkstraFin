@@ -11,6 +11,7 @@ import {
   TextInput,
   Image,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import CheckBox from "expo-checkbox";
 import Footer from "../../images/FooterLogin.png";
@@ -79,6 +80,11 @@ const LoginScreen = ({ navigation }: any) => {
   };
   return (
     <SafeAreaView style={styles.container}>
+      {isLoading && isLoading === true && (
+        <View style={styles.loading}>
+          <ActivityIndicator size="large" color={ColorSystem.primary[800]} />
+        </View>
+      )}
       <View style={styles.containerview}>
         <StatusBar
           barStyle={"dark-content"}
@@ -223,6 +229,16 @@ const styles = StyleSheet.create({
   },
   group: {
     marginTop: 15,
+  },
+  loading: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1,
   },
   group1: {
     marginTop: 20,

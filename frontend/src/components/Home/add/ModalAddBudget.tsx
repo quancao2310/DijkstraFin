@@ -6,6 +6,7 @@ import DatePicker, {
   getFormatedDate,
 } from "react-native-modern-datepicker";
 import {
+  Alert,
   Button,
   Modal,
   ScrollView,
@@ -19,6 +20,44 @@ import {
 import CurrencyInput from "react-native-currency-input";
 import { MaterialIcons } from "@expo/vector-icons";
 import ColorSystem from "../../../color/ColorSystem";
+import { set } from "date-fns";
+import { useCreateBudgetMutation } from "../../../services/budgets";
+import { useDispatch } from "react-redux";
+
+const getStringToday = () => {
+  const today = new Date();
+  const day = String(today.getDate()).padStart(2, "0");
+  const month = String(today.getMonth() + 1).padStart(2, "0"); // Tháng bắt đầu từ 0
+  const year = today.getFullYear();
+
+  const formattedDate = `${day}/${month}/${year}`;
+
+  return formattedDate; // Kết quả sẽ là ngày hôm nay theo định dạng dd/mm/yyyy
+};
+
+const getStringEndMonthDate = () => {
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth(); // Tháng bắt đầu từ 0
+
+  // Tạo một đối tượng Date cho ngày đầu tiên của tháng tiếp theo
+  const firstDayNextMonth = new Date(year, month + 1, 1);
+
+  // Trừ đi 1 ngày từ ngày đầu tiên của tháng tiếp theo để có ngày cuối cùng của tháng hiện tại
+  const lastDayCurrentMonth = new Date(firstDayNextMonth.getTime() - 1);
+
+  const day = String(lastDayCurrentMonth.getDate()).padStart(2, "0");
+  const monthFormatted = String(lastDayCurrentMonth.getMonth() + 1).padStart(
+    2,
+    "0"
+  ); // Tháng bắt đầu từ 0
+  const yearFormatted = lastDayCurrentMonth.getFullYear();
+
+  const formattedDate = `${day}/${monthFormatted}/${yearFormatted}`;
+
+  return formattedDate; // Kết quả sẽ là ngày cuối cùng của tháng hiện tại theo định dạng dd/mm/yyyy
+};
+
 function formatDate(inputDate) {
   // dd/mm/yyyy -> yyyy/mm/dd
   var parts = inputDate.split("/");
@@ -26,8 +65,17 @@ function formatDate(inputDate) {
   return formattedDate;
 }
 const ModalAddBudget = (props: any) => {
-  const { isModalVisible, setIsModalVisible, moneySources } = props;
+  const {
+    isModalVisible,
+    setIsModalVisible,
+    moneySources,
+    budgetCategories,
+    setRefresh,
+  } = props;
   const [money, setMoney] = useState(0);
+  const [amount, setAmount] = useState(0);
+  const [currentSpent, setCurrentSpent] = useState(0);
+  const [categoryId, setCategoryId] = useState("");
   const [selected, setSelected] = useState("");
   const today = new Date();
   const startDate = getFormatedDate(
@@ -39,41 +87,74 @@ const ModalAddBudget = (props: any) => {
   const [isSaveMonthly, setIsSaveMonthly] = useState(false);
   const [openSelectDate, setOpenSelectDate] = useState(false);
   const [openSelectEndDate, setOpenSelectEndDate] = useState(false);
+  const [createBudget, { isLoading }] = useCreateBudgetMutation();
+  const dispatch = useDispatch();
 
   const handleChangeDateStart = (date: any) => {
     date = formatDate(date);
-    console.log(date);
-    console.log(formatDate(date));
-
     setDateStart(date);
   };
   const handleChangeDateEnd = (date: any) => {
     date = formatDate(date);
-    console.log(date);
-
     setDateEnd(date);
   };
   const handlePressSelectDate = () => {
     setOpenSelectDate(!openSelectDate);
   };
-  const onSubmit = () => {
+  const onSubmit = async () => {
+    let formData = {
+      amount: amount,
+      currentSpent: currentSpent,
+      categoryId: categoryId,
+    };
+
+    if (categoryId === "") {
+      Alert.alert("Lỗi", "Vui lòng chọn ngân sách");
+      return;
+    }
+    if (amount <= 0) {
+      Alert.alert("Lỗi", "Số tiền ngân sách phải lớn hơn 0");
+      return;
+    }
+    if (amount < currentSpent) {
+      Alert.alert(
+        "Lỗi",
+        "Số tiền đã sử dụng không thể lớn hơn số tiền ngân sách"
+      );
+      return;
+    }
+
+    console.log(formData);
+    try {
+      const response = await createBudget(formData).unwrap();
+      console.log("Budget created successfully:", response);
+      // Handle successful budget creation here
+      // setIsModalVisible(false);
+    } catch (error) {
+      console.error("Failed to create budget:", error);
+      Alert.alert("Lỗi", "Không thể tạo ngân sách");
+    }
+
+    setTimeout(() => {
+      console.log("Thành công");
+    }, 1000);
+
+    setRefresh(true);
     setIsModalVisible(false);
+    setCurrentSpent(0);
+    setAmount(0);
+    setCategoryId("");
   };
   const handlePressSelectEndDate = () => {
     setOpenSelectEndDate(!openSelectEndDate);
   };
 
-  const dataBudgetType = [
-    { key: "1", value: "Loại ngân sách", disabled: true },
-    { key: "2", value: "Đi lại" },
-    { key: "3", value: "Ăn uống" },
-    { key: "4", value: "Quần áo" },
-    { key: "5", value: "Mua sắm" },
-    { key: "6", value: "Sức khỏe" },
-    { key: "7", value: "Hóa đơn" },
-    { key: "8", value: "Làm đẹp" },
-    { key: "9", value: "Giải trí" },
-  ];
+  const dataBudgetType = budgetCategories.map((item) => ({
+    key: item._id,
+    value: item.name,
+    disabled: item.budgetId !== null,
+  }));
+
   const dataAccountType = moneySources.map((source: any) => ({
     key: source._id,
     value: source.name,
@@ -84,6 +165,11 @@ const ModalAddBudget = (props: any) => {
         visible={isModalVisible}
         transparent={true}
         onRequestClose={() => {
+          console.log(111);
+
+          setAmount(0);
+          setCurrentSpent(0);
+          setCategoryId("");
           setIsModalVisible(false);
         }}
         animationType="slide"
@@ -125,9 +211,9 @@ const ModalAddBudget = (props: any) => {
                 title="X"
                 color={ColorSystem.neutral[400]}
                 onPress={() => {
-                  setDateStart("");
-                  setDateEnd("");
-                  setMoney(0);
+                  setAmount(0);
+                  setCurrentSpent(0);
+                  setCategoryId("");
                   setIsModalVisible(false);
                 }}
               />
@@ -138,13 +224,17 @@ const ModalAddBudget = (props: any) => {
                 <Text style={styles.label}>Chọn ngân sách</Text>
 
                 <SelectList
-                  setSelected={(val) => setSelected(val)}
+                  setSelected={(val) => {
+                    setCategoryId(
+                      dataBudgetType.find((item) => item.value === val).key
+                    );
+                  }}
                   data={dataBudgetType}
                   save="value"
                 />
               </View>
               <View style={styles.group}>
-                <Text style={styles.label}>Số tiền</Text>
+                <Text style={styles.label}>Mức ngân sách thiết lập</Text>
                 <MaterialIcons
                   style={{
                     position: "absolute",
@@ -158,8 +248,40 @@ const ModalAddBudget = (props: any) => {
                 />
                 <CurrencyInput
                   style={styles.input}
-                  value={money}
-                  onChangeValue={setMoney}
+                  value={amount}
+                  onChangeValue={setAmount}
+                  suffix=" VND"
+                  delimiter="."
+                  separator=","
+                  placeholder="0.000 VND"
+                  precision={0}
+                  minValue={0}
+                  onChangeText={(formattedValue) => {
+                    setAmount(
+                      parseInt(
+                        formattedValue.replace(/\./g, "").replace(" VND", "")
+                      )
+                    );
+                  }}
+                />
+              </View>
+              <View style={styles.group}>
+                <Text style={styles.label}>Đã sử dụng {"(nếu có)"}</Text>
+                <MaterialIcons
+                  style={{
+                    position: "absolute",
+                    zIndex: 5,
+                    top: "50%",
+                    left: "3%",
+                  }}
+                  name="attach-money"
+                  size={22}
+                  color={ColorSystem.neutral[400]}
+                />
+                <CurrencyInput
+                  style={styles.input}
+                  value={currentSpent}
+                  onChangeValue={setCurrentSpent}
                   suffix=" VND"
                   delimiter="."
                   separator=","
@@ -168,11 +290,11 @@ const ModalAddBudget = (props: any) => {
                   minValue={0}
                   // showPositiveSign
                   onChangeText={(formattedValue) => {
-                    console.log(
+                    setCurrentSpent(
                       parseInt(
                         formattedValue.replace(/\./g, "").replace(" VND", "")
                       )
-                    ); // 100.000 VND
+                    );
                   }}
                 />
               </View>
@@ -190,9 +312,19 @@ const ModalAddBudget = (props: any) => {
                   color={ColorSystem.neutral[400]}
                 />
 
-                <TouchableOpacity onPress={handlePressSelectDate}>
-                  <View style={[styles.input1]}>
-                    <Text>{dateStart ? dateStart : "Chọn ngày"}</Text>
+                <TouchableOpacity
+                  disabled={true}
+                  onPress={handlePressSelectDate}
+                >
+                  <View
+                    style={[
+                      styles.input1,
+                      !dateStart
+                        ? { backgroundColor: "rgba(0,0,0,0.05)" }
+                        : { backgroundColor: "#fff" },
+                    ]}
+                  >
+                    <Text>{getStringToday()}</Text>
                   </View>
                 </TouchableOpacity>
               </View>
@@ -211,7 +343,7 @@ const ModalAddBudget = (props: any) => {
                 />
                 <TouchableOpacity
                   onPress={handlePressSelectEndDate}
-                  disabled={dateStart == ""}
+                  disabled={true}
                 >
                   <View
                     style={[
@@ -221,19 +353,11 @@ const ModalAddBudget = (props: any) => {
                         : { backgroundColor: "#fff" },
                     ]}
                   >
-                    <Text>{dateEnd ? dateEnd : "Chọn ngày"}</Text>
+                    <Text>{getStringEndMonthDate()}</Text>
                   </View>
                 </TouchableOpacity>
               </View>
-              <View style={styles.group}>
-                <Text style={styles.label}>Tài khoản</Text>
 
-                <SelectList
-                  setSelected={(val) => setSelected(val)}
-                  data={dataAccountType}
-                  save="value"
-                />
-              </View>
               <View style={styles.group1}>
                 <Text style={styles.label}>Lặp lại hàng tháng</Text>
 
