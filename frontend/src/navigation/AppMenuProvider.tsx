@@ -13,6 +13,7 @@ import { MenuProvider } from "react-native-popup-menu";
 import AllTransaction from "../screens/Home/AllTransaction";
 import LoginScreen from "../screens/Auth/LoginScreen";
 import RegisterScreen from "../screens/Auth/RegisterScreen";
+import AllBudget from "../screens/Home/AllBudget";
 const Stack = createStackNavigator();
 
 const AppMenuProvider = () => {
@@ -54,7 +55,6 @@ const AppMenuProvider = () => {
           </>
         )}
         <Stack.Screen name="HomeScreen" component={HomeScreen} />
-        <Stack.Screen name="AllTransaction" component={AllTransaction} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -73,6 +73,11 @@ const AppMenuProvider = () => {
           <Stack.Screen
             name="AllTransaction"
             component={AllTransaction}
+            options={{ headerShown: true }}
+          />
+          <Stack.Screen
+            name="All Budgets"
+            component={AllBudget}
             options={{ headerShown: true }}
           />
         </Stack.Navigator>

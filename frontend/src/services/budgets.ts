@@ -1,6 +1,7 @@
 import { apiSlice } from ".";
 import { Budget } from "../types/budget.type";
-
+import { RootState } from "../store";
+import { useSelector } from "react-redux";
 export const budgetsApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     createBudget: builder.mutation<Budget, Partial<Budget>>({
@@ -9,6 +10,11 @@ export const budgetsApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: body,
       }),
+      invalidatesTags: [
+        {
+          type: "User",
+        },
+      ],
     }),
     getBudgets: builder.query<Budget[], void>({
       query: () => "/budgets",
@@ -22,14 +28,17 @@ export const budgetsApiSlice = apiSlice.injectEndpoints({
         method: "PATCH",
         body: body,
       }),
+      invalidatesTags: [{ type: "User", id: "LIST" }],
     }),
     deleteBudget: builder.mutation<Budget, string>({
       query: (id) => ({
         url: `/budgets/${id}`,
         method: "DELETE",
       }),
+      invalidatesTags: [{ type: "User", id: "LIST" }],
     }),
   }),
+  overrideExisting: true, // Add this line to allow overriding existing endpoints
 });
 
 export const {

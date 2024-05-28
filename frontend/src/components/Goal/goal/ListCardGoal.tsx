@@ -6,7 +6,7 @@ import IconGoalSystem from "../../../icon/IconGoalSystem";
 interface props {
   goals: any;
 }
-// budget.name: String, budget.balance: Number
+
 const ListCardGoal = (data: props) => {
   return (
     <View>
@@ -19,8 +19,9 @@ const ListCardGoal = (data: props) => {
           <>
             <View style={{ width: 90 }}>
               <CardGoal
-                icon={IconGoalSystem[String(data.goals[index].name)]}
-                balance={0}
+                icon={IconGoalSystem[item.icon]}
+                name={item.name}
+                balance={item.balance}
               />
             </View>
           </>

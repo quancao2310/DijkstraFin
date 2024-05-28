@@ -15,6 +15,18 @@ import {
 interface props {
   icon: any;
   balance: number;
+  name: string;
+}
+function convertMoney(amount) {
+  if (amount < 1000) {
+    return amount + " VND";
+  } else if (amount < 1000000) {
+    return Math.floor(amount / 1000) + "K";
+  } else if (amount < 1000000000) {
+    return (amount / 1000000).toFixed(1).replace(".0", "") + "M";
+  } else {
+    return (amount / 1000000000).toFixed(1).replace(".0", "") + "B";
+  }
 }
 
 const CardGoal = (data: props) => {
@@ -27,7 +39,7 @@ const CardGoal = (data: props) => {
           color={data.icon.color}
         />
         <Text style={styles.title}>{data.icon.title}</Text>
-        <Text style={styles.balance}>{data.balance} VND</Text>
+        <Text style={styles.balance}>{convertMoney(data.balance)}</Text>
       </View>
     </>
   );
