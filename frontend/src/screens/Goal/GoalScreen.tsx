@@ -64,7 +64,7 @@ const goals = [
     _id: "6651c7ed9d93aa935ebd0e26",
     name: "Đi du lịch 2026",
     total: 25000000,
-    balance: 25000,
+    balance: 7500000,
     isCompleted: false,
     startDate: "2025-01-01T00:00:00.000Z",
     endDate: "2026-01-01T00:00:00.000Z",
@@ -160,7 +160,7 @@ const GoalScreen = () => {
             </TouchableOpacity>
           </View>
           <ListCardGoal goals={goals} />
-          <GoalCardDetail goal={goals[0]} />
+          <GoalCardDetail goal={goals[3]} />
           <NoInfo name="kế hoạch" />
 
           <View style={styles.addBudget}>
