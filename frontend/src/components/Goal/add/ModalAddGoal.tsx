@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SelectList } from "react-native-dropdown-select-list";
 import { CheckBox, Overlay } from "react-native-elements";
 import IconPicker from "react-native-icon-picker";
@@ -7,6 +7,7 @@ import DatePicker, {
   getFormatedDate,
 } from "react-native-modern-datepicker";
 import {
+  Alert,
   Button,
   Modal,
   ScrollView,
@@ -21,7 +22,20 @@ import CurrencyInput from "react-native-currency-input";
 import { MaterialIcons } from "@expo/vector-icons";
 import ColorSystem from "../../../color/ColorSystem";
 import IconGoalSystem from "../../../icon/IconGoalSystem";
+import { useGetUserMoneySourcesQuery } from "../../../services/users";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store";
+import { set } from "date-fns";
+import { useCreateGoalMutation } from "../../../services/goals";
 
+function formatCurrency(amount: number): string {
+  const formatter = new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+    minimumFractionDigits: 0,
+  });
+  return formatter.format(amount);
+}
 function formatDate(inputDate) {
   // dd/mm/yyyy -> yyyy/mm/dd
   var parts = inputDate.split("/");
@@ -35,6 +49,9 @@ const startDate = getFormatedDate(
 );
 const ModalAddGoal = (props: any) => {
   const { isModalVisible, setIsModalVisible } = props;
+  const userId = useSelector((state: RootState) => state.LoginStatus.userId);
+  let { data: moneySources, isLoading: isLoadingGoals } =
+    useGetUserMoneySourcesQuery(userId);
 
   const [name, setName] = useState("");
   const [icon, setIcon] = useState({
@@ -52,6 +69,8 @@ const ModalAddGoal = (props: any) => {
   const [showIconPicker, setShowIconPicker] = useState(false);
   const [selected, setSelected] = useState("");
 
+  const [createGoal, { isLoading }] = useCreateGoalMutation();
+
   const handleChangeDateStart = (date: any) => {
     date = formatDate(date);
     console.log(date);
@@ -66,37 +85,106 @@ const ModalAddGoal = (props: any) => {
   const handlePressSelectDate = () => {
     setOpenSelectDate(!openSelectDate);
   };
-  const onSubmit = () => {
-    setIsModalVisible(false);
+  const onSubmit = async () => {
+    const formData = {
+      name: name,
+      balance: 0,
+      icon: icon.icon,
+      total: money,
+      userId: userId,
+      startDate: dateStart.split("/").reverse().join("-"),
+      endDate: dateEnd.split("/").reverse().join("-"),
+      moneySourceId: selected,
+    };
+
+    if (formData.name === "") {
+      Alert.alert("Chưa điền đủ thông tin", "Tên kế hoạch không được để trống");
+      return;
+    }
+    if (formData.icon === "category") {
+      Alert.alert("Chưa điền đủ thông tin", "Vui lòng chọn biểu tượng");
+      return;
+    }
+    if (formData.icon === "category") {
+      Alert.alert(
+        "Chưa điền đủ thông tin",
+        "Vui lòng điền số tiền muốn tiết kiệm"
+      );
+      return;
+    }
+    if (formData.startDate === "") {
+      Alert.alert(
+        "Chưa điền đủ thông tin",
+        "Vui lòng chọn ngày bắt đầu kế hoạch"
+      );
+      return;
+    }
+    if (formData.endDate === "") {
+      Alert.alert(
+        "Chưa điền đủ thông tin",
+        "Vui lòng chọn ngày kết thúc kế hoạch"
+      );
+      return;
+    }
+    if (formData.moneySourceId === "") {
+      Alert.alert("Chưa điền đủ thông tin", "Vui lòng chọn tài khoản liên kết");
+      return;
+    }
+    console.log(formData);
+
+    try {
+      const response = await createGoal(formData).unwrap();
+      console.log("Budget created successfully:", response);
+      //   Handle successful budget creation here
+      setDateStart("");
+      setDateEnd("");
+      setMoney(0);
+      setIcon({
+        color: ColorSystem.neutral[300],
+        family: "MaterialIcons",
+        icon: "category",
+      });
+      setName("");
+      setSelected("");
+      setIsModalVisible(false);
+    } catch (error) {
+      console.error("Failed to create budget:", error);
+      Alert.alert("Lỗi", "Không thể tạo ngân sách");
+    }
+    // setIsModalVisible(false);
   };
   const handlePressSelectEndDate = () => {
     setOpenSelectEndDate(!openSelectEndDate);
   };
 
-  const dataBudgetType = [
-    { key: "1", value: "Chọn kế hoạch", disabled: true },
-    { key: "2", value: "Du lịch" },
-    { key: "3", value: "Mua nhà" },
-    { key: "4", value: "Học tập" },
-    { key: "5", value: "Mua sắm" },
-    { key: "6", value: "Mua ô tô" },
-    { key: "7", value: "Sửa chữa" },
-    { key: "8", value: "Nội thất" },
-    { key: "9", value: "Đầu tư" },
-    { key: "10", value: "Du thuyền" },
-  ];
-  const dataAccountType = [
-    { key: "1", value: "Loại tài khoản", disabled: true },
-    { key: "2", value: "Ví điện tử MOMO" },
-    { key: "3", value: "Thẻ ngân hàng" },
-    { key: "4", value: "Thẻ tín dụng" },
-  ];
+  const [dataAccountType, setDataAccountType] = useState([]);
+  useEffect(() => {
+    if (moneySources && moneySources.length > 0) {
+      const data = moneySources.map((item) => {
+        return {
+          key: item._id,
+          value: item.name + " - Số dư: " + formatCurrency(item.balance),
+        };
+      });
+      setDataAccountType(data);
+    }
+  }, [moneySources]);
   return (
     <View>
       <Modal
         visible={isModalVisible}
         transparent={true}
         onRequestClose={() => {
+          setDateStart("");
+          setDateEnd("");
+          setMoney(0);
+          setIcon({
+            color: ColorSystem.neutral[300],
+            family: "MaterialIcons",
+            icon: "category",
+          });
+          setName("");
+          setSelected("");
           setIsModalVisible(false);
         }}
         animationType="slide"
@@ -140,6 +228,13 @@ const ModalAddGoal = (props: any) => {
                   setDateStart("");
                   setDateEnd("");
                   setMoney(0);
+                  setIcon({
+                    color: ColorSystem.neutral[300],
+                    family: "MaterialIcons",
+                    icon: "category",
+                  });
+                  setName("");
+                  setSelected("");
                   setIsModalVisible(false);
                 }}
               />
@@ -287,7 +382,11 @@ const ModalAddGoal = (props: any) => {
                 <Text style={styles.label}>Tài khoản</Text>
 
                 <SelectList
-                  setSelected={(val) => setSelected(val)}
+                  setSelected={(val) =>
+                    setSelected(
+                      dataAccountType.find((item) => item.value === val).key
+                    )
+                  }
                   data={dataAccountType}
                   save="value"
                 />

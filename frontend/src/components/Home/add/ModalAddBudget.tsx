@@ -23,6 +23,7 @@ import ColorSystem from "../../../color/ColorSystem";
 import { set } from "date-fns";
 import { useCreateBudgetMutation } from "../../../services/budgets";
 import { useDispatch } from "react-redux";
+import Toast from "react-native-toast-message";
 
 const getStringToday = () => {
   const today = new Date();
@@ -87,6 +88,7 @@ const ModalAddBudget = (props: any) => {
   const [isSaveMonthly, setIsSaveMonthly] = useState(false);
   const [openSelectDate, setOpenSelectDate] = useState(false);
   const [openSelectEndDate, setOpenSelectEndDate] = useState(false);
+  const [name, setName] = useState("");
   const [createBudget, { isLoading }] = useCreateBudgetMutation();
   const dispatch = useDispatch();
 
@@ -103,8 +105,8 @@ const ModalAddBudget = (props: any) => {
   };
   const onSubmit = async () => {
     let formData = {
-      amount: amount,
-      currentSpent: currentSpent,
+      amount: amount ? amount : 0,
+      currentSpent: currentSpent ? currentSpent : 0,
       categoryId: categoryId,
     };
 
@@ -141,6 +143,11 @@ const ModalAddBudget = (props: any) => {
 
     setRefresh(true);
     setIsModalVisible(false);
+    Toast.show({
+      type: "success",
+      text1: `Bạn đã thêm thành công ngân sách ${name}`,
+      position: "top",
+    });
     setCurrentSpent(0);
     setAmount(0);
     setCategoryId("");
@@ -228,6 +235,7 @@ const ModalAddBudget = (props: any) => {
                     setCategoryId(
                       dataBudgetType.find((item) => item.value === val).key
                     );
+                    setName(val);
                   }}
                   data={dataBudgetType}
                   save="value"

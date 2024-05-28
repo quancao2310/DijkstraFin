@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  ActivityIndicator,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -20,73 +21,6 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import GoalCardDetail from "../../components/Goal/goal/GoalCardDetail";
 
-const goals = [
-  {
-    _id: "6651c8a19d93aa935ebd0e2c",
-    name: "Tiệc sinh nhật",
-    total: 4000000,
-    balance: 4000000,
-    isCompleted: true,
-    startDate: "2024-01-01T00:00:00.000Z",
-    endDate: "2024-02-01T00:00:00.000Z",
-    icon: "beach-access",
-    userId: "664da67d075cdd1e0f0a9851",
-    moneySourceId: "664ebbacbb15d5d4a664d3a9",
-    __v: 0,
-  },
-  {
-    _id: "6651c8709d93aa935ebd0e2a",
-    name: "Học đại học",
-    total: 100000000,
-    balance: 0,
-    isCompleted: false,
-    startDate: "2021-09-30T00:00:00.000Z",
-    endDate: "2025-09-30T00:00:00.000Z",
-    icon: "beach-access",
-    userId: "664da67d075cdd1e0f0a9851",
-    moneySourceId: "664f5925eab4cf12bf675e44",
-    __v: 0,
-  },
-  {
-    _id: "6651c8469d93aa935ebd0e28",
-    name: "Sửa nhà",
-    total: 50000000,
-    balance: 0,
-    isCompleted: false,
-    startDate: "2021-01-01T00:00:00.000Z",
-    endDate: "2023-01-01T00:00:00.000Z",
-    icon: "beach-access",
-    userId: "664da67d075cdd1e0f0a9851",
-    moneySourceId: "664f5925eab4cf12bf675e44",
-    __v: 0,
-  },
-  {
-    _id: "6651c7ed9d93aa935ebd0e26",
-    name: "Đi du lịch 2026",
-    total: 25000000,
-    balance: 25000,
-    isCompleted: false,
-    startDate: "2025-01-01T00:00:00.000Z",
-    endDate: "2026-01-01T00:00:00.000Z",
-    icon: "beach-access",
-    userId: "664da67d075cdd1e0f0a9851",
-    moneySourceId: "664f5925eab4cf12bf675e44",
-    __v: 0,
-  },
-  {
-    _id: "6651c4f79d93aa935ebd0e1c",
-    name: "Đi du lịch 2022",
-    total: 30000000,
-    balance: 30000000,
-    isCompleted: true,
-    startDate: "2021-01-01T00:00:00.000Z",
-    endDate: "2022-01-01T00:00:00.000Z",
-    icon: "beach-access",
-    userId: "664da67d075cdd1e0f0a9851",
-    moneySourceId: "664f5925eab4cf12bf675e44",
-    __v: 0,
-  },
-];
 const moneySources = [
   {
     _id: "664ebbacbb15d5d4a664d3a9",
@@ -110,7 +44,7 @@ const moneySources = [
   },
 ];
 
-const GoalScreen = () => {
+const GoalScreen = ({ navigation }: any) => {
   const [isAddBudgetModalVisible, setIsAddBudgetModalVisible] = useState(false);
   const [isAddTransactionModalVisible, setIsAddTransactionModalVisible] =
     useState(false);
@@ -120,14 +54,16 @@ const GoalScreen = () => {
   const handleAddTransaction = () => {
     setIsAddTransactionModalVisible(true);
   };
+  const handleViewAllGoals = () => {
+    navigation.navigate("All Goals", { data: goals });
+  };
   const userId = useSelector((state: RootState) => state.LoginStatus.userId);
 
-  //   let { data: goals, isLoading: isLoadingGoals } = useGetUserGoalsQuery(userId);
+  let { data: goals, isLoading: isLoadingGoals } = useGetUserGoalsQuery(userId);
 
   useEffect(() => {
     console.log(goals);
-    console.log("GoalScreen");
-  });
+  }, [goals]);
   return (
     <SafeAreaView
       style={[
@@ -137,6 +73,11 @@ const GoalScreen = () => {
           : { backgroundColor: "#fff" },
       ]}
     >
+      {isLoadingGoals && isLoadingGoals == true && (
+        <View style={styles.loading}>
+          <ActivityIndicator size="large" color={ColorSystem.primary[800]} />
+        </View>
+      )}
       <ScrollView
         showsVerticalScrollIndicator={false}
         showsHorizontalScrollIndicator={false}
@@ -159,9 +100,34 @@ const GoalScreen = () => {
               </Text>
             </TouchableOpacity>
           </View>
-          <ListCardGoal goals={goals} />
-          <GoalCardDetail goal={goals[0]} />
-          <NoInfo name="kế hoạch" />
+          <View style={{ paddingBottom: 15 }}>
+            <ListCardGoal goals={goals} />
+          </View>
+          {goals &&
+            goals.length > 0 &&
+            goals.slice(0, 2).map((goal, index) => {
+              return <GoalCardDetail goal={goal} key={index} />;
+            })}
+          {goals && goals.length > 2 && (
+            <TouchableOpacity
+              style={{
+                paddingTop: 15,
+                paddingBottom: 30,
+                alignItems: "center",
+              }}
+              onPress={handleViewAllGoals}
+            >
+              <Text
+                style={{
+                  color: ColorSystem.secondary[600],
+                  fontSize: 16,
+                }}
+              >
+                Xem tất cả
+              </Text>
+            </TouchableOpacity>
+          )}
+          {(!goals || goals.length < 1) && <NoInfo name="kế hoạch" />}
 
           <View style={styles.addBudget}>
             <Text style={{ fontSize: 20, fontWeight: "500" }}>Giao dịch</Text>
@@ -201,6 +167,16 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "space-between",
+  },
+  loading: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 1,
   },
   containerview: {
     paddingHorizontal: "5%",
