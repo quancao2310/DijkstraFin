@@ -38,7 +38,9 @@ const CardGoal = (data: props) => {
           size={32}
           color={data.icon.color}
         />
-        <Text style={styles.title}>{data.icon.title}</Text>
+        <Text style={styles.title}>
+          {data.name.length <= 10 ? data.name : data.name.slice(0, 8) + "..."}
+        </Text>
         <Text style={styles.balance}>{convertMoney(data.balance)}</Text>
       </View>
     </>

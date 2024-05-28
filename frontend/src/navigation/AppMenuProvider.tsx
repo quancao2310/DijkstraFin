@@ -14,6 +14,7 @@ import AllTransaction from "../screens/Home/AllTransaction";
 import LoginScreen from "../screens/Auth/LoginScreen";
 import RegisterScreen from "../screens/Auth/RegisterScreen";
 import AllBudget from "../screens/Home/AllBudget";
+import AllGoal from "../screens/Goal/AllGoal";
 const Stack = createStackNavigator();
 
 const AppMenuProvider = () => {
@@ -78,6 +79,11 @@ const AppMenuProvider = () => {
           <Stack.Screen
             name="All Budgets"
             component={AllBudget}
+            options={{ headerShown: true }}
+          />
+          <Stack.Screen
+            name="All Goals"
+            component={AllGoal}
             options={{ headerShown: true }}
           />
         </Stack.Navigator>

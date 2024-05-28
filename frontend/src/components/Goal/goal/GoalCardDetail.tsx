@@ -38,10 +38,6 @@ const GoalCardDetail = ({ goal }) => {
   const [modalVisible, setModalVisible] = useState(false);
   const [updatedBudget, setUpdatedBudget] = useState(0);
 
-  useEffect(() => {
-    console.log(goal);
-  }, []);
-
   return (
     <>
       <View style={styles.container}>

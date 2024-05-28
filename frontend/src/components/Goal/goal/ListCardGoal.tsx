@@ -21,12 +21,12 @@ const ListCardGoal = (data: props) => {
               <CardGoal
                 icon={IconGoalSystem[item.icon]}
                 name={item.name}
-                balance={item.balance}
+                balance={item.total}
               />
             </View>
           </>
         )}
-        keyExtractor={(item) => item.name}
+        keyExtractor={(item) => item._id}
         ItemSeparatorComponent={() => <View style={{ width: 10 }} />}
       ></FlatList>
     </View>

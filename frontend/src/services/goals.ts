@@ -9,6 +9,11 @@ export const goalsApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: body,
       }),
+      invalidatesTags: [
+        {
+          type: "User",
+        },
+      ],
     }),
     getGoals: builder.query<Goal[], void>({
       query: () => "/goals",
@@ -30,6 +35,7 @@ export const goalsApiSlice = apiSlice.injectEndpoints({
       }),
     }),
   }),
+  overrideExisting: true, // Add this line to allow overriding existing endpoints
 });
 
 export const {

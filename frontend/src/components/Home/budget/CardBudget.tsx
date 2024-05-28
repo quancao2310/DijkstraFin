@@ -16,6 +16,17 @@ interface props {
   icon: any;
   balance: number;
 }
+function convertMoney(amount) {
+  if (amount < 1000) {
+    return amount + " VND";
+  } else if (amount < 1000000) {
+    return Math.floor(amount / 1000) + "K";
+  } else if (amount < 1000000000) {
+    return (amount / 1000000).toFixed(1).replace(".0", "") + "M";
+  } else {
+    return (amount / 1000000000).toFixed(1).replace(".0", "") + "B";
+  }
+}
 
 const CardBudget = (data: props) => {
   return (
@@ -28,7 +39,7 @@ const CardBudget = (data: props) => {
         />
         <Text style={styles.title}>{data.icon.title}</Text>
         <Text style={styles.balance}>
-          {data.balance === 0 ? "0 VND" : `${Math.round(data.balance / 1000)}k`}
+          {data.balance === 0 ? "0 VND" : convertMoney(data.balance)}
         </Text>
       </View>
     </>

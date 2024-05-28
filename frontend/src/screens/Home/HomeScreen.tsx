@@ -175,6 +175,9 @@ const HomeScreen = ({ navigation }: any) => {
   };
   useEffect(() => {
     if (categories && budgets) {
+      console.log(categories);
+      console.log(budgets);
+
       const count = categories.reduce((count, category) => {
         if (category.budgetId !== null) {
           return count + 1;
@@ -212,7 +215,7 @@ const HomeScreen = ({ navigation }: any) => {
           : { backgroundColor: "#fff" },
       ]}
     >
-      {isLoadingCategories && isLoadingBudgets && (
+      {(isLoadingCategories || isLoadingBudgets) && (
         <View style={styles.loading}>
           <ActivityIndicator size="large" color={ColorSystem.primary[800]} />
         </View>
