@@ -11,6 +11,9 @@ import {
 } from "react-native";
 import PieChart from "react-native-pie-chart";
 import { useGetRecordsQuery } from "../../services/records";
+import { getRandomColor } from "../../utils/getRandomColor";
+import { calculatePercentagesLabel } from "../../utils/calculatePercentageLebel";
+import { WaitingIndicator } from "../../components/utils/WaitingIndicator";
 
 const StatisticScreen = () => {
   let { data: allRecords, isLoading } = useGetRecordsQuery();
@@ -19,6 +22,7 @@ const StatisticScreen = () => {
   let incomeSeries = [];
   let outcomeSeries = [];
   let colorList = [];
+  let allNamesArray = [];
   if (!isLoading) {
     incomeData = allRecords.filter((x) =>
       ["isCompleted", "income"].includes(x.type)
@@ -68,21 +72,12 @@ const StatisticScreen = () => {
       return map;
     }, new Map());
 
-  const getRandomColor = () => {
-    const letters = "0123456789ABCDEF";
-    let color = "#";
-    for (let i = 0; i < 6; i++) {
-      color += letters[Math.floor(Math.random() * 16)];
-    }
-    return color;
-  };
-
   if (!isLoading) {
     const allNamesSet = new Set([
       ...incomeTotalByMoneySource.keys(),
       ...outcomeTotalByMoneySource.keys(),
     ]);
-    const allNamesArray = Array.from(allNamesSet);
+    allNamesArray = Array.from(allNamesSet);
     const nameToColorMap = new Map();
     allNamesArray.forEach((name) => {
       nameToColorMap.set(name, getRandomColor());
@@ -94,17 +89,18 @@ const StatisticScreen = () => {
       (name) => outcomeTotalByMoneySource.get(name) || 0
     );
     colorList = allNamesArray.map((name) => nameToColorMap.get(name));
-    console.log(allNamesArray);
-    console.log(colorList);
   }
-  console.log(colorList);
   const widthAndHeight = 150;
-  console.log(incomeSeries);
-  const series = [123, 321, 123];
-  const sliceColor = ["#5A9", "#F88", "#9C6"];
   const coverRadius = 0.45;
   const coverFill = "#FFF";
-  if (isLoading) return <ActivityIndicator size="large" />;
+  if (isLoading) {
+    return (
+      <View style={{ height: "100%", padding: "50%" }}>
+        <WaitingIndicator></WaitingIndicator>
+      </View>
+    );
+  }
+
   return (
     <>
       <SafeAreaView style={{ flex: 1, alignItems: "center" }}>
@@ -164,8 +160,8 @@ const StatisticScreen = () => {
           >
             <PieChart
               widthAndHeight={widthAndHeight}
-              series={series}
-              sliceColor={sliceColor}
+              series={outcomeSeries}
+              sliceColor={colorList}
               coverRadius={coverRadius}
               coverFill={coverFill}
             />
@@ -183,12 +179,12 @@ const StatisticScreen = () => {
         </View>
         <View style={{ flexDirection: "row" }}>
           <LegendComponent
-            labels={["Ví tiền mặt (40%)", "Momo (60%)", "Visa (0%)"]}
-            colors={["#5A9", "#F88", "#9C6"]}
+            labels={calculatePercentagesLabel(allNamesArray, incomeSeries)}
+            colors={colorList}
           ></LegendComponent>
           <LegendComponent
-            labels={["Ví tiền mặt (40%)", "Momo (60%)", "Visa (0%)"]}
-            colors={["#5A9", "#F88", "#9C6"]}
+            labels={calculatePercentagesLabel(allNamesArray, outcomeSeries)}
+            colors={colorList}
           ></LegendComponent>
         </View>
       </SafeAreaView>

@@ -19,12 +19,29 @@ import { useGetAllSourceQuery } from "../../services/moneySources";
 import { mapNameToIcon } from "../../utils/mapIcon";
 import { useAppSelector } from "../../hooks/redux";
 import { RootState } from "../../store";
+import { WaitingIndicator } from "../../components/utils/WaitingIndicator";
+import { useGetRecordsQuery } from "../../services/records";
+import TransactionCard from "../../components/Home/add/transaction/TransactionCard";
 
 export default function WalletScreen() {
-  let { data: moneySources, isLoading, refetch } = useGetAllSourceQuery();
-
-  if (isLoading) {
+  let { data: moneySources, isLoading } = useGetAllSourceQuery();
+  let { data: records, isLoading: isLoadingRecords } = useGetRecordsQuery();
+  let recordsData = [];
+  if (!isLoadingRecords) {
+    recordsData = records.map((item) => {
+      return {
+        _id: item._id,
+        category:
+          typeof item.categoryId === "string" ? "" : item.categoryId.name,
+        description: item.description,
+        date: item.date,
+        type: item.type,
+        amount: item.amount,
+        _v: 0,
+      };
+    });
   }
+  console.log(recordsData);
   return (
     <SafeAreaView
       style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
@@ -34,7 +51,11 @@ export default function WalletScreen() {
         <DateFilterButton />
         <View style={styles.innerScroll}>
           <ScrollView nestedScrollEnabled={true}>
-            {isLoading && <ActivityIndicator></ActivityIndicator>}
+            {isLoading && (
+              <View style={{ height: "100%", padding: "50%" }}>
+                <WaitingIndicator></WaitingIndicator>
+              </View>
+            )}
             {moneySources &&
               moneySources.map((item) => (
                 <MoneySource
@@ -48,25 +69,12 @@ export default function WalletScreen() {
           </ScrollView>
         </View>
         <AddNewSourceButton />
-        <NoRecord />
-        <RecordCard
-          source="tiền mặt"
-          title="mua quà"
-          amount={10000}
-          date="14/2/2024"
-        />
-        <RecordCard
-          source="tiền mặt"
-          title="mua quà"
-          amount={10000}
-          date="14/2/2024"
-        />
-        <RecordCard
-          source="tiền mặt"
-          title="mua quà"
-          amount={10000}
-          date="14/2/2024"
-        />
+        {(isLoadingRecords || records.length == 0) && <NoRecord></NoRecord>}
+        {/* {!isLoadingRecords &&
+          records.length > 0 &&
+          recordsData.map((item, index) => {
+            return <TransactionCard record={item} key={index} />;
+          })} */}
       </ScrollView>
     </SafeAreaView>
   );
