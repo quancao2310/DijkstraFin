@@ -9,17 +9,20 @@
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#7265e2"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      }
+        "backgroundColor": "#7265e2"
+      },
+      "package": "com.cmquan2003.DijkstraFin"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -32,6 +35,17 @@
           "project": "react-native"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "ea02beb1-52a3-4c76-8355-7e787327d8a6"
+      }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/ea02beb1-52a3-4c76-8355-7e787327d8a6"
+    }
   }
 }
