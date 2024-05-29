@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -16,7 +17,10 @@ import ColorSystem from "../../color/ColorSystem";
 import ModalAddGoal from "../../components/Goal/add/ModalAddGoal";
 import CircleGraph from "../../components/Home/graph/CircleGraph";
 import ModalAddTransaction from "../../components/Home/add/ModalAddTransaction";
-import { useGetUserGoalsQuery } from "../../services/users";
+import {
+  useGetUserGoalsQuery,
+  useGetUserMoneySourcesQuery,
+} from "../../services/users";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import GoalCardDetail from "../../components/Goal/goal/GoalCardDetail";
@@ -48,7 +52,16 @@ const GoalScreen = ({ navigation }: any) => {
   const [isAddBudgetModalVisible, setIsAddBudgetModalVisible] = useState(false);
   const [isAddTransactionModalVisible, setIsAddTransactionModalVisible] =
     useState(false);
+  const userId = useSelector((state: RootState) => state.LoginStatus.userId);
+  let { data: moneySources } = useGetUserMoneySourcesQuery(userId);
   const handleAddBudget = () => {
+    if (moneySources && moneySources.length == 0) {
+      Alert.alert(
+        "Không có tài khoản nào",
+        "Vui lòng tạo tài khoản trước khi tạo kế hoạch"
+      );
+      return;
+    }
     setIsAddBudgetModalVisible(true);
   };
   const handleAddTransaction = () => {
@@ -57,13 +70,12 @@ const GoalScreen = ({ navigation }: any) => {
   const handleViewAllGoals = () => {
     navigation.navigate("All Goals", { data: goals });
   };
-  const userId = useSelector((state: RootState) => state.LoginStatus.userId);
 
   let { data: goals, isLoading: isLoadingGoals } = useGetUserGoalsQuery(userId);
 
   useEffect(() => {
     console.log(goals);
-  }, [goals]);
+  }, [goals, moneySources]);
   return (
     <SafeAreaView
       style={[
@@ -155,7 +167,7 @@ const GoalScreen = ({ navigation }: any) => {
           <ModalAddTransaction
             isModalVisible={isAddTransactionModalVisible}
             setIsModalVisible={setIsAddTransactionModalVisible}
-            moneySources={moneySources}
+            // moneySources={moneySources}
           />
         </View>
       </ScrollView>
