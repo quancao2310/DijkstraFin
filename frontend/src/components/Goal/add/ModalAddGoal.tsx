@@ -22,7 +22,12 @@ import CurrencyInput from "react-native-currency-input";
 import { MaterialIcons } from "@expo/vector-icons";
 import ColorSystem from "../../../color/ColorSystem";
 import IconGoalSystem from "../../../icon/IconGoalSystem";
-import { useGetUserMoneySourcesQuery } from "../../../services/users";
+import {
+  useGetUserBudgetsQuery,
+  useGetUserCategoriesQuery,
+  useGetUserGoalsQuery,
+  useGetUserMoneySourcesQuery,
+} from "../../../services/users";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../store";
 import { set } from "date-fns";
@@ -50,7 +55,7 @@ const startDate = getFormatedDate(
 const ModalAddGoal = (props: any) => {
   const { isModalVisible, setIsModalVisible } = props;
   const userId = useSelector((state: RootState) => state.LoginStatus.userId);
-  let { data: moneySources, isLoading: isLoadingGoals } =
+  let { data: moneySources, isLoading: isLoadingMoneySources } =
     useGetUserMoneySourcesQuery(userId);
 
   const [name, setName] = useState("");

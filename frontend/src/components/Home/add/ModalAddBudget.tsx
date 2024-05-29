@@ -69,9 +69,9 @@ const ModalAddBudget = (props: any) => {
   const {
     isModalVisible,
     setIsModalVisible,
-    moneySources,
     budgetCategories,
     setRefresh,
+    refreshNewBudget,
   } = props;
   const [money, setMoney] = useState(0);
   const [amount, setAmount] = useState(0);
@@ -132,6 +132,7 @@ const ModalAddBudget = (props: any) => {
       console.log("Budget created successfully:", response);
       // Handle successful budget creation here
       // setIsModalVisible(false);
+      refreshNewBudget(response);
     } catch (error) {
       console.error("Failed to create budget:", error);
       Alert.alert("Lỗi", "Không thể tạo ngân sách");
@@ -160,11 +161,6 @@ const ModalAddBudget = (props: any) => {
     key: item._id,
     value: item.name,
     disabled: item.budgetId !== null,
-  }));
-
-  const dataAccountType = moneySources.map((source: any) => ({
-    key: source._id,
-    value: source.name,
   }));
   return (
     <View>

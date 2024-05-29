@@ -21,7 +21,10 @@ import TransactionCard from "../../components/Home/add/transaction/TransactionCa
 import IconBudgetSystem from "../../icon/IconBugetSystem";
 import BudgetDetailCard from "../../components/Home/budget/BudgetDetailCard";
 import { useGetCategoriesQuery } from "../../services/categories";
-import { useGetBudgetsQuery } from "../../services/budgets";
+import {
+  useGetBudgetByIdQuery,
+  useGetBudgetsQuery,
+} from "../../services/budgets";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import { set } from "date-fns";
@@ -29,29 +32,6 @@ import {
   useGetUserBudgetsQuery,
   useGetUserCategoriesQuery,
 } from "../../services/users";
-
-const moneySources = [
-  {
-    _id: "664ebbacbb15d5d4a664d3a9",
-    name: "Ví điện tử Momo",
-    balance: 2000000,
-    userId: "664da67d075cdd1e0f0a9851",
-  },
-  {
-    _id: "664f5925eab4cf12bf675e44",
-    name: "Ngân hàng ABC",
-    balance: 1000000,
-    userId: "664da67d075cdd1e0f0a9851",
-    __v: 0,
-  },
-  {
-    _id: "664f6147eab08ab2cd75ad4d",
-    name: "Ngân hàng XYZ",
-    balance: 0,
-    userId: "664da67d075cdd1e0f0a9851",
-    __v: 0,
-  },
-];
 
 const records = [
   {
@@ -118,18 +98,22 @@ const HomeScreen = ({ navigation }: any) => {
 
   let { data: categories, isLoading: isLoadingCategories } =
     useGetUserCategoriesQuery(userId);
-  const { data: budgets, isLoading: isLoadingBudgets } =
+  let { data: budgets, isLoading: isLoadingBudgets } =
     useGetUserBudgetsQuery(userId);
 
   const [budgetCategories, setBudgetCategories] = useState([]);
   const [budgetsInfo, setBudgetsInfo] = useState([]);
+  const [newBudget, setNewBudget] = useState(null);
   const [refresh, setRefresh] = useState(false);
-
+  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
   const handleAddBudget = () => {
     setIsAddBudgetModalVisible(true);
   };
   const handleAddTransaction = () => {
     setIsAddTransactionModalVisible(true);
+  };
+  const refreshNewBudget = (data: any) => {
+    setNewBudget(data);
   };
   const handleViewAllTransactions = () => {
     navigation.navigate("AllTransaction", { data: records });
@@ -137,7 +121,7 @@ const HomeScreen = ({ navigation }: any) => {
   const handleViewAllBudgets = () => {
     navigation.navigate("All Budgets", { data: budgetsInfo });
   };
-  const preprocessBudgetCategories = () => {
+  const preprocessBudgetCategories = async () => {
     const expenseCategories = categories.filter(
       (category) => category.type === "expense"
     );
@@ -175,9 +159,6 @@ const HomeScreen = ({ navigation }: any) => {
   };
   useEffect(() => {
     if (categories && budgets) {
-      console.log(categories);
-      console.log(budgets);
-
       const count = categories.reduce((count, category) => {
         if (category.budgetId !== null) {
           return count + 1;
@@ -185,8 +166,26 @@ const HomeScreen = ({ navigation }: any) => {
         return count;
       }, 0);
       if (count === budgets.length) {
+        if (
+          newBudget &&
+          budgets.find((budget) => budget._id === newBudget._id) === undefined
+        ) {
+          const newCategories = categories.map((category) => {
+            if (category._id === newBudget.categoryId) {
+              return {
+                ...category,
+                budgetId: newBudget._id,
+              };
+            }
+            return category;
+          });
+          categories = newCategories;
+          const newBudgets = [...budgets, newBudget];
+          budgets = newBudgets;
+          setNewBudget(null);
+        }
         preprocessBudgetCategories();
-      } else {
+      } else if (budgets.length > count) {
         const updatedCategories = categories.map((category) => {
           const matchingBudget = budgets.find(
             (budget) => budget.categoryId === category._id
@@ -202,6 +201,15 @@ const HomeScreen = ({ navigation }: any) => {
 
         categories = updatedCategories;
         preprocessBudgetCategories();
+      } else {
+        console.log("Budgets are not ready yet");
+        if (!newBudget) {
+          return;
+        }
+        const newBudgets = [...budgets, newBudget];
+        budgets = newBudgets;
+        preprocessBudgetCategories();
+        setNewBudget(null);
       }
     }
   }, [categories, budgets]);
@@ -323,14 +331,13 @@ const HomeScreen = ({ navigation }: any) => {
             <ModalAddBudget
               isModalVisible={isAddBudgetModalVisible}
               setIsModalVisible={setIsAddBudgetModalVisible}
-              moneySources={moneySources}
               budgetCategories={budgetCategories}
               setRefresh={setRefresh}
+              refreshNewBudget={refreshNewBudget}
             />
             <ModalAddTransaction
               isModalVisible={isAddTransactionModalVisible}
               setIsModalVisible={setIsAddTransactionModalVisible}
-              moneySources={moneySources}
             />
           </View>
         </ScrollView>
