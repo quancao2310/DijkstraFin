@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { SelectList } from "react-native-dropdown-select-list";
 import { CheckBox, Overlay } from "react-native-elements";
 import DatePicker, {
@@ -19,14 +19,35 @@ import {
 import CurrencyInput from "react-native-currency-input";
 import { MaterialIcons } from "@expo/vector-icons";
 import ColorSystem from "../../../color/ColorSystem";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store";
+import {
+  useGetUserCategoriesQuery,
+  useGetUserGoalsQuery,
+  useGetUserMoneySourcesQuery,
+} from "../../../services/users";
 function formatDate(inputDate) {
   // dd/mm/yyyy -> yyyy/mm/dd
   var parts = inputDate.split("/");
   var formattedDate = parts[2] + "/" + parts[1] + "/" + parts[0];
   return formattedDate;
 }
+function formatCurrency(amount: number): string {
+  const formatter = new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+    minimumFractionDigits: 0,
+  });
+  return formatter.format(amount);
+}
 const ModalAddTransaction = (props: any) => {
-  const { isModalVisible, setIsModalVisible, moneySources } = props;
+  const { isModalVisible, setIsModalVisible } = props;
+  const userId = useSelector((state: RootState) => state.LoginStatus.userId);
+  let { data: moneySources, isLoading: isLoadingMoneySources } =
+    useGetUserMoneySourcesQuery(userId);
+  let { data: categories, isLoading: isLoadingCategpries } =
+    useGetUserCategoriesQuery(userId);
+  let { data: goals, isLoading: isLoadingGoals } = useGetUserGoalsQuery(userId);
 
   const [money, setMoney] = useState(0);
   const [selected, setSelected] = useState("");
@@ -87,11 +108,29 @@ const ModalAddTransaction = (props: any) => {
     { key: "4", value: "Quà tặng" },
     { key: "5", value: "Học bổng" },
   ];
-  const dataAccountType = moneySources.map((source: any) => ({
-    key: source._id,
-    value: source.name,
-  }));
 
+  const [dataAccountType, setDataAccountType] = useState([]);
+  //   const [dataIncomeType, setDataIncomeType] = useState([]);
+  useEffect(() => {
+    if (moneySources && moneySources.length > 0) {
+      const data = moneySources.map((item) => {
+        return {
+          key: item._id,
+          value: item.name + " - Số dư: " + formatCurrency(item.balance),
+        };
+      });
+      setDataAccountType(data);
+    }
+    // if (categories && categories.length > 0) {
+    //   const data = categories.map((item) => {
+    //     return {
+    //       key: item._id,
+    //       value: item.name,
+    //     };
+    //   });
+    //   setDataAccountType(data);
+    // }
+  }, [moneySources]);
   return (
     <View>
       <Modal
