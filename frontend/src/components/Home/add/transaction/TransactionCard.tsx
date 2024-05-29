@@ -14,10 +14,8 @@ import {
 } from "react-native";
 import { Icon } from "react-native-elements";
 import IconTransactionSystem from "../../../../icon/IconTransactionSystem";
+import IconGoalSystem from "../../../../icon/IconGoalSystem";
 
-interface props {
-  record: any;
-}
 function formatCurrency(amount: number): string {
   const formatter = new Intl.NumberFormat("vi-VN", {
     // style: "currency",
@@ -52,20 +50,41 @@ function formatDate(isoString) {
   return `${month} ${day}`;
 }
 
-const TransactionCard = (data: props) => {
+const TransactionCard = ({ record }) => {
+  let iconName = "";
+  const iconColor = "";
+
+  if (record.type == "expense" || record.type == "income") {
+    iconName = IconTransactionSystem[record.categoryId.name].name;
+  }
   return (
     <>
       <View style={styles.container}>
         <View style={styles.leftItem}>
           <View style={styles.iconContainer}>
             <MaterialIcons
-              name={IconTransactionSystem[data.record.category].name}
+              name={
+                record.type == "expense" || record.type == "income"
+                  ? IconTransactionSystem[record.categoryId.name].name
+                  : IconGoalSystem[record.goalId.icon].name
+              }
               size={32}
-              color={IconTransactionSystem[data.record.category].color}
+              color={
+                record.type == "expense" || record.type == "income"
+                  ? IconTransactionSystem[record.categoryId.name].color
+                  : IconGoalSystem[record.goalId.icon].color
+              }
             />
           </View>
           <View style={{ paddingLeft: 15 }}>
-            <Text style={{ fontSize: 18 }}>{data.record.description}</Text>
+            <Text style={{ fontSize: 18 }}>
+              {record.description.length + record.amount.toString().length <= 25
+                ? record.description
+                : record.description.slice(
+                    0,
+                    15 + record.amount.toString().length - 9
+                  ) + "..."}
+            </Text>
             <Text
               style={{
                 paddingTop: 5,
@@ -73,7 +92,7 @@ const TransactionCard = (data: props) => {
                 color: ColorSystem.neutral[400],
               }}
             >
-              {formatDate(data.record.date)}
+              {formatDate(record.date)}
             </Text>
           </View>
         </View>
@@ -85,8 +104,8 @@ const TransactionCard = (data: props) => {
             size={20}
           />
           <Text style={{ fontSize: 18, paddingTop: 5 }}>
-            {data.record.type == "expense" ? "- " : "+ "}
-            {formatCurrency(data.record.amount)}
+            {record.type == "expense" ? "- " : "+ "}
+            {formatCurrency(record.amount)}
           </Text>
         </View>
       </View>

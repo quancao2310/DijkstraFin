@@ -20,10 +20,12 @@ import ModalAddTransaction from "../../components/Home/add/ModalAddTransaction";
 import {
   useGetUserGoalsQuery,
   useGetUserMoneySourcesQuery,
+  useGetUserRecordsQuery,
 } from "../../services/users";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import GoalCardDetail from "../../components/Goal/goal/GoalCardDetail";
+import TransactionCard from "../../components/Home/add/transaction/TransactionCard";
 
 const moneySources = [
   {
@@ -54,6 +56,11 @@ const GoalScreen = ({ navigation }: any) => {
     useState(false);
   const userId = useSelector((state: RootState) => state.LoginStatus.userId);
   let { data: moneySources } = useGetUserMoneySourcesQuery(userId);
+  let { data: records, isLoading: isLoadingRecords } =
+    useGetUserRecordsQuery(userId);
+  const handleViewAllTransactions = () => {
+    navigation.navigate("AllTransaction", { data: records });
+  };
   const handleAddBudget = () => {
     if (moneySources && moneySources.length == 0) {
       Alert.alert(
@@ -75,7 +82,7 @@ const GoalScreen = ({ navigation }: any) => {
 
   useEffect(() => {
     console.log(goals);
-  }, [goals, moneySources]);
+  }, [goals, moneySources, records]);
   return (
     <SafeAreaView
       style={[
@@ -142,7 +149,9 @@ const GoalScreen = ({ navigation }: any) => {
           {(!goals || goals.length < 1) && <NoInfo name="kế hoạch" />}
 
           <View style={styles.addBudget}>
-            <Text style={{ fontSize: 20, fontWeight: "500" }}>Giao dịch</Text>
+            <Text style={{ fontSize: 20, fontWeight: "500" }}>
+              Giao dịch tiết kiệm
+            </Text>
             <TouchableOpacity
               style={styles.buttonAddBudget}
               onPress={handleAddTransaction}
@@ -157,7 +166,38 @@ const GoalScreen = ({ navigation }: any) => {
               </Text>
             </TouchableOpacity>
           </View>
-          <NoInfo name="giao dịch" />
+          {(!records ||
+            records.filter((item) => item.type === "saving").length === 0) && (
+            <NoInfo name="giao dịch" />
+          )}
+          {records &&
+            records.length > 0 &&
+            records
+              .filter((item) => item.type === "saving")
+              .slice(0, 3)
+              .map((item, index) => {
+                return <TransactionCard record={item} key={index} />;
+              })}
+          {records &&
+            records.filter((item) => item.type === "saving").length > 3 && (
+              <TouchableOpacity
+                style={{
+                  paddingTop: 15,
+                  paddingBottom: 30,
+                  alignItems: "center",
+                }}
+                onPress={handleViewAllTransactions}
+              >
+                <Text
+                  style={{
+                    color: ColorSystem.secondary[600],
+                    fontSize: 16,
+                  }}
+                >
+                  Xem tất cả
+                </Text>
+              </TouchableOpacity>
+            )}
 
           <ModalAddGoal
             isModalVisible={isAddBudgetModalVisible}
@@ -167,7 +207,6 @@ const GoalScreen = ({ navigation }: any) => {
           <ModalAddTransaction
             isModalVisible={isAddTransactionModalVisible}
             setIsModalVisible={setIsAddTransactionModalVisible}
-            // moneySources={moneySources}
           />
         </View>
       </ScrollView>

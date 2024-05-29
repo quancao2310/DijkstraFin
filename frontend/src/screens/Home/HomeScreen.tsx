@@ -31,64 +31,65 @@ import { set } from "date-fns";
 import {
   useGetUserBudgetsQuery,
   useGetUserCategoriesQuery,
+  useGetUserRecordsQuery,
 } from "../../services/users";
 
-const records = [
-  {
-    _id: "661fb7c7e68985486257c3b3",
-    amount: 25000,
-    type: "expense",
-    category: "restaurant",
-    description: "Ăn sáng",
-    date: "2024-04-17T00:00:00.000Z",
-    __v: 0,
-  },
-  {
-    _id: "661fb7d3e68985486257c3b5",
-    amount: 50000,
-    type: "expense",
-    category: "beauty",
-    description: "Ăn trưa",
-    date: "2024-04-17T00:00:00.000Z",
-    __v: 0,
-  },
-  {
-    _id: "661fb7d7e68985486257c3b7",
-    amount: 50000,
-    type: "expense",
-    category: "restaurant",
-    description: "Ăn tối",
-    date: "2024-04-17T00:00:00.000Z",
-    __v: 0,
-  },
-  {
-    _id: "661fb7f0e68985486257c3b9",
-    amount: 10000000,
-    type: "income",
-    category: "salary",
-    description: "Lương tháng 3",
-    date: "2024-04-17T00:00:00.000Z",
-    __v: 0,
-  },
-  {
-    _id: "661fb7f4e68985486257c3bb",
-    amount: 10000000,
-    type: "income",
-    category: "salary",
-    description: "Lương tháng 4",
-    date: "2024-04-17T00:00:00.000Z",
-    __v: 0,
-  },
-  {
-    _id: "66201ee6b7049857abc2b2dc",
-    amount: 25000,
-    type: "expense",
-    category: "restaurant",
-    description: "Ăn sáng",
-    date: "2024-04-17T00:00:00.000Z",
-    __v: 0,
-  },
-];
+// const records = [
+//   {
+//     _id: "661fb7c7e68985486257c3b3",
+//     amount: 25000,
+//     type: "expense",
+//     category: "restaurant",
+//     description: "Ăn sáng",
+//     date: "2024-04-17T00:00:00.000Z",
+//     __v: 0,
+//   },
+//   {
+//     _id: "661fb7d3e68985486257c3b5",
+//     amount: 50000,
+//     type: "expense",
+//     category: "beauty",
+//     description: "Ăn trưa",
+//     date: "2024-04-17T00:00:00.000Z",
+//     __v: 0,
+//   },
+//   {
+//     _id: "661fb7d7e68985486257c3b7",
+//     amount: 50000,
+//     type: "expense",
+//     category: "restaurant",
+//     description: "Ăn tối",
+//     date: "2024-04-17T00:00:00.000Z",
+//     __v: 0,
+//   },
+//   {
+//     _id: "661fb7f0e68985486257c3b9",
+//     amount: 10000000,
+//     type: "income",
+//     category: "salary",
+//     description: "Lương tháng 3",
+//     date: "2024-04-17T00:00:00.000Z",
+//     __v: 0,
+//   },
+//   {
+//     _id: "661fb7f4e68985486257c3bb",
+//     amount: 10000000,
+//     type: "income",
+//     category: "salary",
+//     description: "Lương tháng 4",
+//     date: "2024-04-17T00:00:00.000Z",
+//     __v: 0,
+//   },
+//   {
+//     _id: "66201ee6b7049857abc2b2dc",
+//     amount: 25000,
+//     type: "expense",
+//     category: "restaurant",
+//     description: "Ăn sáng",
+//     date: "2024-04-17T00:00:00.000Z",
+//     __v: 0,
+//   },
+// ];
 
 const HomeScreen = ({ navigation }: any) => {
   const [isAddBudgetModalVisible, setIsAddBudgetModalVisible] = useState(false);
@@ -100,6 +101,8 @@ const HomeScreen = ({ navigation }: any) => {
     useGetUserCategoriesQuery(userId);
   let { data: budgets, isLoading: isLoadingBudgets } =
     useGetUserBudgetsQuery(userId);
+  let { data: records, isLoading: isLoadingRecords } =
+    useGetUserRecordsQuery(userId);
 
   const [budgetCategories, setBudgetCategories] = useState([]);
   const [budgetsInfo, setBudgetsInfo] = useState([]);
@@ -286,7 +289,9 @@ const HomeScreen = ({ navigation }: any) => {
               </TouchableOpacity>
             )}
             <View style={styles.addBudget}>
-              <Text style={{ fontSize: 20, fontWeight: "500" }}>Giao dịch</Text>
+              <Text style={{ fontSize: 20, fontWeight: "500" }}>
+                Giao dịch thu chi
+              </Text>
               <TouchableOpacity
                 style={styles.buttonAddBudget}
                 onPress={handleAddTransaction}
@@ -303,31 +308,41 @@ const HomeScreen = ({ navigation }: any) => {
                 </Text>
               </TouchableOpacity>
             </View>
-            {(!records || records.length === 0) && <NoInfo name="giao dịch" />}
-            {records &&
-              records.length > 0 &&
-              records.map((item, index) => {
-                return <TransactionCard record={item} key={index} />;
-              })}
-            {records && records.length > 3 && (
-              <TouchableOpacity
-                style={{
-                  paddingTop: 15,
-                  paddingBottom: 30,
-                  alignItems: "center",
-                }}
-                onPress={handleViewAllTransactions}
-              >
-                <Text
+            <View style={{ paddingBottom: 30 }}>
+              {(!records || records.length === 0) && (
+                <NoInfo name="giao dịch" />
+              )}
+              {records &&
+                records.length > 0 &&
+                records
+                  .filter(
+                    (item) => item.type === "income" || item.type === "expense"
+                  )
+                  .slice(0, 3)
+                  .map((item, index) => {
+                    return <TransactionCard record={item} key={index} />;
+                  })}
+              {records && records.length > 3 && (
+                <TouchableOpacity
                   style={{
-                    color: ColorSystem.secondary[600],
-                    fontSize: 16,
+                    paddingTop: 15,
+
+                    alignItems: "center",
                   }}
+                  onPress={handleViewAllTransactions}
                 >
-                  Xem tất cả
-                </Text>
-              </TouchableOpacity>
-            )}
+                  <Text
+                    style={{
+                      color: ColorSystem.secondary[600],
+                      fontSize: 16,
+                    }}
+                  >
+                    Xem tất cả
+                  </Text>
+                </TouchableOpacity>
+              )}
+            </View>
+
             <ModalAddBudget
               isModalVisible={isAddBudgetModalVisible}
               setIsModalVisible={setIsAddBudgetModalVisible}
