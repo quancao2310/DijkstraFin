@@ -32,4 +32,4 @@ jobs:
         run: npm ci
 
       - name: Create preview
-        uses: eas update --branch preview --message "${{ github.event.pull_request.title }}"
+        run: eas update --branch preview --message "${{ github.event.pull_request.title }}"

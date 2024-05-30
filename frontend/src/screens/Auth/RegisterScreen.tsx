@@ -117,7 +117,7 @@ const RegisterScreen = ({ navigation }: any) => {
       Toast.show({
         type: "success",
         text1: "Chúc mừng bạn đã đăng ký thành công",
-        text2: "Hãy đăng nhập để trải nghiệm ngay",
+        text2: "Hãy đăng nhập để trải nghiệm ngay!",
         position: "top",
         topOffset: Dimensions.get("window").height / 2 - 50,
       });
