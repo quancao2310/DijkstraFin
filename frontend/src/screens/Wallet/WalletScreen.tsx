@@ -41,7 +41,6 @@ export default function WalletScreen() {
       };
     });
   }
-  console.log(recordsData);
   return (
     <SafeAreaView
       style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
