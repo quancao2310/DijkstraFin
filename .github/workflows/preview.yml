@@ -19,7 +19,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18.x
-          cache: yarn
+          cache: npm
+          cache-dependency-path: '**/package-lock.json'
 
       - name: Setup EAS
         uses: expo/expo-github-action@v8
@@ -28,7 +29,7 @@ jobs:
           token: ${{ secrets.EXPO_TOKEN }}
 
       - name: Install dependencies
-        run: yarn install
+        run: npm ci
 
       - name: Create preview
         uses: expo/expo-github-action/preview@v8
