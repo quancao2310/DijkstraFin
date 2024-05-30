@@ -23,7 +23,7 @@ export default function OtherScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Cài đặt</Text>
         <TouchableOpacity style={styles.button}>
@@ -47,15 +47,15 @@ export default function OtherScreen() {
           Đăng xuất
         </Text>
       </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: "#fff",
+    margin: 25,
+    // backgroundColor: "#fff",
   },
   title: {
     fontSize: 24,

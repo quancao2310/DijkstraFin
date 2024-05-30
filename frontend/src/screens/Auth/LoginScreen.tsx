@@ -12,6 +12,7 @@ import {
   Image,
   Dimensions,
   ActivityIndicator,
+  ScrollView,
 } from "react-native";
 import CheckBox from "expo-checkbox";
 import Footer from "../../images/FooterLogin.png";
@@ -86,7 +87,11 @@ const LoginScreen = ({ navigation }: any) => {
           <ActivityIndicator size="large" color={ColorSystem.primary[800]} />
         </View>
       )}
-      <View style={styles.containerview}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        showsHorizontalScrollIndicator={false}
+        style={styles.containerview}
+      >
         <StatusBar
           barStyle={"dark-content"}
           backgroundColor={"#fff"}
@@ -203,7 +208,7 @@ const LoginScreen = ({ navigation }: any) => {
             </View>
           </View>
         </View>
-      </View>
+      </ScrollView>
 
       <Image
         style={{
