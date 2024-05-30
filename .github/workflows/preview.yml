@@ -32,6 +32,4 @@ jobs:
         run: npm ci
 
       - name: Create preview
-        uses: expo/expo-github-action/preview@v8
-        with:
-          command: eas update --branch preview --message "${{ github.event.pull_request.title }}"
+        uses: eas update --branch preview --message "${{ github.event.pull_request.title }}"
