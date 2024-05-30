@@ -48,7 +48,7 @@ const DonutChartGoal = ({
       Math.round(totalValue.value) >= 1000000000
         ? `${(Math.round(totalValue.value) / 1000000000).toFixed(2)} tỷ`
         : Math.round(totalValue.value) >= 10000000
-        ? `${(Math.round(totalValue.value) / 10000000).toFixed(2)} triệu`
+        ? `${(Math.round(totalValue.value) / 1000000).toFixed(2)} triệu`
         : `${Math.round(totalValue.value)}₫`,
     []
   );

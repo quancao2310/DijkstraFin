@@ -426,7 +426,8 @@ const styles = StyleSheet.create({
   group: { marginTop: 15 },
   input: {
     paddingLeft: 35,
-    paddingVertical: 14,
+    paddingVertical: 0,
+    height: 45,
     borderWidth: 1,
     borderRadius: 10,
     borderColor: "gray",
@@ -434,7 +435,9 @@ const styles = StyleSheet.create({
   },
   input1: {
     paddingLeft: 20,
-    paddingVertical: 14,
+    paddingVertical: 0,
+    height: 45,
+    justifyContent: "center",
     borderWidth: 1,
     borderRadius: 10,
     borderColor: "gray",
