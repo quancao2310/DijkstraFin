@@ -1,6 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import ColorSystem from "../../color/ColorSystem";
+import { formatNumberWithPeriods } from "../../utils/numberUtils";
 
 interface MoneyFlowIndicatorProps {
   label: string;
@@ -19,7 +20,9 @@ const MoneyFlowIndicator: React.FC<MoneyFlowIndicatorProps> = ({
     <View style={styles.container}>
       <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
         <Text style={[styles.label, { color }]}>{label}</Text>
-        <Text style={[styles.amount, { color }]}>{amount} VNĐ</Text>
+        <Text style={[styles.amount, { color }]}>
+          {formatNumberWithPeriods(amount)} VNĐ
+        </Text>
       </View>
 
       <View style={styles.ammount}>

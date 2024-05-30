@@ -6,5 +6,7 @@ export const getRandomColor = (): string => {
     categories[Math.floor(Math.random() * categories.length)];
   const shades = Object.keys(ColorSystem[randomCategory]);
   const randomShade = shades[Math.floor(Math.random() * shades.length)];
-  return ColorSystem[randomCategory][randomShade];
+  if (ColorSystem[randomCategory][randomShade] != ColorSystem.neutral[100])
+    return ColorSystem[randomCategory][randomShade];
+  else return getRandomColor();
 };

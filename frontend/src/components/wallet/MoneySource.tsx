@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import ColorSystem from "../../color/ColorSystem";
+import { formatNumberWithPeriods } from "../../utils/numberUtils";
 interface props {
   icon: string;
   name: string;
@@ -27,8 +28,12 @@ const MoneySource = (data: props) => {
       </View>
       <View style={{ width: "70%" }}>
         <Text style={styles.walletName}>{data.name.toUpperCase()}</Text>
-        <Text style={styles.walletUsed}>Đã chi: {data.used} VNĐ</Text>
-        <Text style={styles.walletBalance}>Số dư: {data.balance} VNĐ</Text>
+        <Text style={styles.walletUsed}>
+          Đã chi: {formatNumberWithPeriods(data.used)} VNĐ
+        </Text>
+        <Text style={styles.walletBalance}>
+          Số dư: {formatNumberWithPeriods(data.balance)} VNĐ
+        </Text>
       </View>
       <View style={{ width: "10%" }}>
         <TouchableOpacity style={{ marginVertical: "100%" }}>
