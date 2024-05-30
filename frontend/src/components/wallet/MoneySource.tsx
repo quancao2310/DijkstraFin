@@ -1,14 +1,18 @@
-import React, { useState } from "react";
+import React from "react";
 import { View, TouchableOpacity, Text, StyleSheet } from "react-native";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
 import ColorSystem from "../../color/ColorSystem";
 import { formatNumberWithPeriods } from "../../utils/numberUtils";
-interface props {
+
+interface Props {
+  id: string;
   icon: string;
   name: string;
   balance: number;
   used: number;
+  onMorePress: () => void;
 }
+
 const getIcon = (icon, size: number, color: string) => {
   return (
     <MaterialIcons
@@ -20,29 +24,33 @@ const getIcon = (icon, size: number, color: string) => {
   );
 };
 
-const MoneySource = (data: props) => {
+const MoneySource = ({ id, icon, name, balance, used, onMorePress }: Props) => {
   return (
     <View style={styles.card}>
       <View style={{ width: "20%" }}>
-        {getIcon(data.icon, 30, ColorSystem.secondary[600])}
+        {getIcon(icon, 30, ColorSystem.secondary[600])}
       </View>
       <View style={{ width: "70%" }}>
-        <Text style={styles.walletName}>{data.name.toUpperCase()}</Text>
+        <Text style={styles.walletName}>{name.toUpperCase()}</Text>
         <Text style={styles.walletUsed}>
-          Đã chi: {formatNumberWithPeriods(data.used)} VNĐ
+          Đã chi: {formatNumberWithPeriods(used)} VNĐ
         </Text>
         <Text style={styles.walletBalance}>
-          Số dư: {formatNumberWithPeriods(data.balance)} VNĐ
+          Số dư: {formatNumberWithPeriods(balance)} VNĐ
         </Text>
       </View>
       <View style={{ width: "10%" }}>
-        <TouchableOpacity style={{ marginVertical: "100%" }}>
+        <TouchableOpacity
+          style={{ marginVertical: "100%" }}
+          onPress={onMorePress}
+        >
           <Feather name="more-vertical" size={24} color="black" />
         </TouchableOpacity>
       </View>
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   card: {
     flexDirection: "row",
@@ -68,4 +76,5 @@ const styles = StyleSheet.create({
     marginBottom: "5%",
   },
 });
+
 export default MoneySource;

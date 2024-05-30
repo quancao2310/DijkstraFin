@@ -16,6 +16,7 @@ const StatisticScreen = () => {
           </View>
           <BudgetStatistic></BudgetStatistic>
         </SafeAreaView>
+        <View style={{ padding: "20%" }}></View>
       </ScrollView>
     </>
   );

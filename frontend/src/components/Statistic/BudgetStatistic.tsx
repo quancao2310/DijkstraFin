@@ -2,24 +2,32 @@ import React from "react";
 import { SafeAreaView, View, Text, StyleSheet } from "react-native";
 import PieChart from "react-native-pie-chart";
 import { getRandomColor } from "../../utils/getRandomColor";
-import LegendComponent from "../../components/Statistic/Legends";
+import LegendComponent from "./Legends";
 import { useGetBudgetsQuery } from "../../services/budgets";
 import { WaitingIndicator } from "../utils/WaitingIndicator";
 import { useGetCategoriesQuery } from "../../services/categories";
 import ColorSystem from "../../color/ColorSystem";
 import { formatNumberWithPeriods } from "../../utils/numberUtils";
 import { calculatePercentagesLabel } from "../../utils/calculatePercentageLebel";
+import { useAppSelector } from "../../hooks/redux";
+import { RootState } from "../../store";
+import {
+  useGetUserBudgetsQuery,
+  useGetUserCategoriesQuery,
+} from "../../services/users";
 
 const BudgetStatistic = () => {
-  const { data: budgets, isLoading: isLoadingBudgets } = useGetBudgetsQuery();
+  const userId = useAppSelector((state: RootState) => state.LoginStatus.userId);
+  const { data: budgets, isLoading: isLoadingBudgets } =
+    useGetUserBudgetsQuery(userId);
   const { data: categories, isLoading: isLoadingCategories } =
-    useGetCategoriesQuery();
+    useGetUserCategoriesQuery(userId);
   let joinData = [];
 
   if (budgets == undefined || categories == undefined) {
     return (
-      <View style={{ height: "100%", padding: "50%" }}>
-        <WaitingIndicator />
+      <View style={{ height: "50%", padding: "20%" }}>
+        <WaitingIndicator></WaitingIndicator>
       </View>
     );
   } else {

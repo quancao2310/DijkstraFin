@@ -2,14 +2,17 @@ import ColorSystem from "../../color/ColorSystem";
 import LegendComponent from "../../components/Statistic/Legends";
 import MoneyFlowIndicator from "../../components/Statistic/MoneyFlowIndicator";
 import { SafeAreaView, View, Text, StyleSheet } from "react-native";
-import { useGetRecordsQuery } from "../../services/records";
 import { getRandomColor } from "../../utils/getRandomColor";
 import { calculatePercentagesLabel } from "../../utils/calculatePercentageLebel";
 import { WaitingIndicator } from "../utils/WaitingIndicator";
 import PieChart from "react-native-pie-chart";
+import { useAppSelector } from "../../hooks/redux";
+import { RootState } from "../../store";
+import { useGetUserRecordsQuery } from "../../services/users";
 
 const RecordStatisticByMoneySource = () => {
-  let { data: allRecords, isLoading } = useGetRecordsQuery();
+  const userId = useAppSelector((state: RootState) => state.LoginStatus.userId);
+  let { data: allRecords, isLoading } = useGetUserRecordsQuery(userId);
   let incomeData = [];
   let outcomeData = [];
   let incomeSeries = [];

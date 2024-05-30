@@ -15,8 +15,18 @@ export const moneySourcesApiSlice = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["MoneySource"],
     }),
+    deleteMoneySource: builder.mutation<MoneySource, string>({
+      query: (id) => ({
+        url: `/money-sources/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: ["MoneySource"],
+    }),
   }),
 });
 
-export const { useGetAllSourceQuery, useCreateMoneySourceMutation } =
-  moneySourcesApiSlice;
+export const {
+  useGetAllSourceQuery,
+  useCreateMoneySourceMutation,
+  useDeleteMoneySourceMutation,
+} = moneySourcesApiSlice;
