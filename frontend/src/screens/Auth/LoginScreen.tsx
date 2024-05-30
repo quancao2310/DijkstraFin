@@ -20,6 +20,7 @@ import ColorSystem from "../../color/ColorSystem";
 import { stateIsLogin } from "../../store/reducers/login.reducer";
 import { usePostLoginMutation } from "../../services/auth";
 import { useNavigation } from "@react-navigation/native";
+import { set } from "date-fns";
 
 const imageAspectRatio = 414 / 218;
 const scaleWidth = Dimensions.get("window").width;
@@ -104,10 +105,10 @@ const LoginScreen = ({ navigation }: any) => {
             </Text>
             <Text style={{ fontSize: 17 }}>
               Hãy đăng nhập để đồng bộ dữ liệu của bạn, cũng như kết nối bạn với
-              cộng đồng người dùng của chúng tôi. By signing in you are agreeing{" "}
+              cộng đồng người dùng của chúng tôi. By signing in you are agreeing
+              our:
             </Text>
             <View style={{ flexDirection: "row" }}>
-              <Text style={{ fontSize: 17 }}>our </Text>
               <TouchableOpacity
                 onPress={() => {
                   Alert.alert("Sau nay lam chuyen trang");
@@ -178,7 +179,13 @@ const LoginScreen = ({ navigation }: any) => {
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
-                onPress={() => navigation.navigate("RegisterScreen")}
+                onPress={() => {
+                  setEmail("");
+                  setPassword("");
+                  setCheckMail(true);
+                  setErrorPass("");
+                  navigation.navigate("RegisterScreen");
+                }}
                 style={styles.btnRegister}
               >
                 <Text
@@ -248,7 +255,8 @@ const styles = StyleSheet.create({
   },
   input: {
     paddingLeft: 35,
-    paddingVertical: 18,
+    paddingVertical: 0,
+    height: 50,
     borderBottomWidth: 1,
     borderColor: "gray",
     backgroundColor: "#fff",

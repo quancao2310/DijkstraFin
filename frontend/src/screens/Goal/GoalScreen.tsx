@@ -162,38 +162,39 @@ const GoalScreen = ({ navigation }: any) => {
               </Text>
             </TouchableOpacity>
           </View>
-          {(!records ||
-            records.filter((item) => item.type === "saving").length === 0) && (
-            <NoInfo name="giao dịch" />
-          )}
-          {records &&
-            records.length > 0 &&
-            records
-              .filter((item) => item.type === "saving")
-              .slice(0, 3)
-              .map((item, index) => {
-                return <TransactionCard record={item} key={index} />;
-              })}
-          {records &&
-            records.filter((item) => item.type === "saving").length > 3 && (
-              <TouchableOpacity
-                style={{
-                  paddingTop: 15,
-                  paddingBottom: 30,
-                  alignItems: "center",
-                }}
-                onPress={handleViewAllTransactions}
-              >
-                <Text
+          <View style={{ marginBottom: 15 }}>
+            {(!records ||
+              records.filter((item) => item.type === "saving").length ===
+                0) && <NoInfo name="giao dịch" />}
+            {records &&
+              records.length > 0 &&
+              records
+                .filter((item) => item.type === "saving")
+                .slice(0, 3)
+                .map((item, index) => {
+                  return <TransactionCard record={item} key={index} />;
+                })}
+            {records &&
+              records.filter((item) => item.type === "saving").length > 3 && (
+                <TouchableOpacity
                   style={{
-                    color: ColorSystem.secondary[600],
-                    fontSize: 16,
+                    paddingTop: 15,
+                    paddingBottom: 30,
+                    alignItems: "center",
                   }}
+                  onPress={handleViewAllTransactions}
                 >
-                  Xem tất cả
-                </Text>
-              </TouchableOpacity>
-            )}
+                  <Text
+                    style={{
+                      color: ColorSystem.secondary[600],
+                      fontSize: 16,
+                    }}
+                  >
+                    Xem tất cả
+                  </Text>
+                </TouchableOpacity>
+              )}
+          </View>
 
           <ModalAddGoal
             isModalVisible={isAddBudgetModalVisible}
