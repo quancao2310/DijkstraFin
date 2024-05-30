@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
-import { Model, Query } from "mongoose";
+import { FilterQuery, Model, Query } from "mongoose";
 import { Record } from "./schemas/record.schema";
 import { TransactionType } from "../types";
 import { CreateRecordDto } from "./dto/create-record.dto";
@@ -13,6 +13,7 @@ import { CategoriesService } from "../categories/categories.service";
 import { MoneySourcesService } from "../money-sources/money-sources.service";
 import { GoalsService } from "../goals/goals.service";
 import { BudgetsService } from "../budgets/budgets.service";
+import { GetRecordsFiltersDto } from "./dto/get-records-filters.dto";
 
 @Injectable()
 export class RecordsService {
@@ -111,8 +112,42 @@ export class RecordsService {
     return record;
   }
 
-  async findByMoneySourceId(moneySourceId: string): Promise<Record[]> {
-    return this.recordModel.find({ moneySourceId }).sort({ _id: -1 }).exec();
+  async findByMoneySourceId(
+    moneySourceId: string,
+    filters: GetRecordsFiltersDto = {}
+  ): Promise<Record[]> {
+    const query: FilterQuery<Record> = { moneySourceId };
+    if (filters.type) {
+      query.type = filters.type;
+    }
+    if (filters.startDate) {
+      query.date = { $gte: filters.startDate };
+    }
+    if (filters.endDate) {
+      const endDate = new Date(filters.endDate);
+      endDate.setDate(endDate.getDate() + 1);
+      query.date = { ...query.date, $lte: endDate.toISOString() };
+    }
+    return this.recordModel.find(query).sort({ _id: -1 }).exec();
+  }
+
+  async findByCategoryId(
+    categoryId: string,
+    filters: GetRecordsFiltersDto = {}
+  ): Promise<Record[]> {
+    const query: FilterQuery<Record> = { categoryId };
+    if (filters.type) {
+      query.type = filters.type;
+    }
+    if (filters.startDate) {
+      query.date = { $gte: filters.startDate };
+    }
+    if (filters.endDate) {
+      const endDate = new Date(filters.endDate);
+      endDate.setDate(endDate.getDate() + 1);
+      query.date = { ...query.date, $lte: endDate.toISOString() };
+    }
+    return this.recordModel.find(query).sort({ _id: -1 }).exec();
   }
 
   async update(id: string, updateRecordDto: UpdateRecordDto): Promise<Record> {
