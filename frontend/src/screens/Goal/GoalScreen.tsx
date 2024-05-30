@@ -26,29 +26,8 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 import GoalCardDetail from "../../components/Goal/goal/GoalCardDetail";
 import TransactionCard from "../../components/Home/add/transaction/TransactionCard";
-
-const moneySources = [
-  {
-    _id: "664ebbacbb15d5d4a664d3a9",
-    name: "Ví điện tử Momo",
-    balance: 2000000,
-    userId: "664da67d075cdd1e0f0a9851",
-  },
-  {
-    _id: "664f5925eab4cf12bf675e44",
-    name: "Ngân hàng ABC",
-    balance: 1000000,
-    userId: "664da67d075cdd1e0f0a9851",
-    __v: 0,
-  },
-  {
-    _id: "664f6147eab08ab2cd75ad4d",
-    name: "Ngân hàng XYZ",
-    balance: 0,
-    userId: "664da67d075cdd1e0f0a9851",
-    __v: 0,
-  },
-];
+import { useAppDispatch } from "../../hooks/redux";
+import { stateToggle } from "../../store/reducers/addMoneySrcModal.reducer";
 
 const GoalScreen = ({ navigation }: any) => {
   const [isAddBudgetModalVisible, setIsAddBudgetModalVisible] = useState(false);
@@ -61,11 +40,27 @@ const GoalScreen = ({ navigation }: any) => {
   const handleViewAllTransactions = () => {
     navigation.navigate("AllTransaction", { data: records });
   };
+  const dispatch = useAppDispatch();
   const handleAddBudget = () => {
     if (moneySources && moneySources.length == 0) {
       Alert.alert(
-        "Không có tài khoản nào",
-        "Vui lòng tạo tài khoản trước khi tạo kế hoạch"
+        "Chưa tạo nguồn tiền",
+        "Vui lòng tạo nguồn tiền trước để liên kết",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+          {
+            text: "Tạo nguồn tiền",
+            onPress: () => {
+              console.log("Tạo nguồn tiền");
+              dispatch(stateToggle());
+              navigation.navigate("Ví của bạn");
+            },
+          },
+        ]
       );
       return;
     }
