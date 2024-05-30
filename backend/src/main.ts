@@ -1,5 +1,6 @@
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
+import { RedirectMiddleware } from "./redirect.middleware";
 import { ValidationPipe } from "@nestjs/common";
 import { MongooseErrorFilter } from "./mongoose-error.filter";
 import { SwaggerModule, DocumentBuilder } from "@nestjs/swagger";
@@ -8,6 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix("api/v1");
   app.enableCors();
+  app.use(new RedirectMiddleware().use);
   app.useGlobalPipes(new ValidationPipe());
   app.useGlobalFilters(new MongooseErrorFilter());
 
