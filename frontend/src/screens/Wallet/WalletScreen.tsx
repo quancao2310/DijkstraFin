@@ -29,21 +29,6 @@ export default function WalletScreen() {
   let { data: moneySources, isLoading } = useGetUserMoneySourcesQuery(userId);
   let { data: records, isLoading: isLoadingRecords } =
     useGetUserRecordsQuery(userId);
-  let recordsData = [];
-  if (!isLoadingRecords) {
-    recordsData = records.map((item) => {
-      return {
-        _id: item._id,
-        category:
-          typeof item.categoryId === "string" ? "" : item.categoryId.name,
-        description: item.description,
-        date: item.date,
-        type: item.type,
-        amount: item.amount,
-        _v: 0,
-      };
-    });
-  }
   return (
     <SafeAreaView
       style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
