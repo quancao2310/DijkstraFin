@@ -1,89 +1,69 @@
 const IconTransactionSystem = {
-  salary: {
+  "Tiền lương": {
     name: "payments",
     title: "Tiền lương",
     color: "#52c45a",
   },
-  investment: {
+  "Đầu tư": {
     name: "account-balance",
     title: "Đầu tư",
     color: "#611999",
   },
-  bonus: {
+  "Tiền thưởng": {
     name: "emoji-events",
     title: "Tiền thưởng",
     color: "#FE88B1",
   },
-  award: {
+  "Học bổng": {
     name: "school",
     title: "Học bổng",
     color: "#66C5CC",
   },
-  gift: {
+  "Quà tặng": {
     name: "redeem",
     title: "Quà tặng",
     color: "#F6CF71",
   },
-  restaurant: {
+  "Ăn uống": {
     name: "local-dining",
     title: "Ăn uống",
     color: "#5584A7",
   },
-  grocery: {
+  "Mua sắm": {
     name: "local-grocery-store",
     title: "Mua sắm",
     color: "#87C55F",
   },
-  transport: {
+  "Di chuyển": {
     name: "airport-shuttle",
     title: "Đi lại",
     color: "#DCB0F2",
   },
-  cloth: {
+  "Quần áo": {
     name: "checkroom",
     title: "Quần áo",
     color: "#C9DB74",
   },
-  beauty: {
+  "Làm đẹp": {
     name: "content-cut",
     title: "Làm đẹp",
     color: "#EE9D95",
   },
-  bill: {
+  "Hóa đơn": {
     name: "receipt-long",
     title: "Hóa đơn",
     color: "#8C593D",
   },
-  medication: {
+  "Sức khỏe": {
     name: "medication",
     title: "Sức khỏe",
     color: "#1F436D",
   },
-  entertainment: {
+  "Giải trí": {
     name: "attractions",
     title: "Giải trí",
     color: "#8BE0A4",
   },
-  //   beauty: {
-  //     name: "content-cut",
-  //     title: "Làm đẹp",
-  //     color: "#EE9D95",
-  //   },
-  //   bill: {
-  //     name: "receipt-long",
-  //     title: "Hóa đơn",
-  //     color: "#8C593D",
-  //   },
-  //   medication: {
-  //     name: "medication",
-  //     title: "Sức khỏe",
-  //     color: "#1F436D",
-  //   },
-  //   entertainment: {
-  //     name: "attractions",
-  //     title: "Giải trí",
-  //     color: "#8BE0A4",
-  //   },
 };
 
 export default IconTransactionSystem;

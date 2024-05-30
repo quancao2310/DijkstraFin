@@ -16,7 +16,7 @@ export const usersApiSlice = apiSlice.injectEndpoints({
     }),
     getUserMoneySources: builder.query({
       query: (id) => `/users/${id}/money-sources`,
-      providesTags: ["MoneySource"],
+      providesTags: ["MoneySource", { type: "User" }],
     }),
     getUserGoals: builder.query({
       query: (id) => `/users/${id}/goals`,
