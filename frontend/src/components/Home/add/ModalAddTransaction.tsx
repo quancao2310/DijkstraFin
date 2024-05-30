@@ -6,6 +6,7 @@ import DatePicker, {
   getFormatedDate,
 } from "react-native-modern-datepicker";
 import {
+  Alert,
   Button,
   Modal,
   ScrollView,
@@ -26,11 +27,30 @@ import {
   useGetUserGoalsQuery,
   useGetUserMoneySourcesQuery,
 } from "../../../services/users";
+import { set } from "date-fns";
+import { useCreateRecordMutation } from "../../../services/records";
+import { RecordType } from "../../../types";
 function formatDate(inputDate) {
   // dd/mm/yyyy -> yyyy/mm/dd
   var parts = inputDate.split("/");
   var formattedDate = parts[2] + "/" + parts[1] + "/" + parts[0];
   return formattedDate;
+}
+function getLastDayOfMonth(date) {
+  const lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+  return getFormattedDate(lastDay, "YYYY/MM/DD");
+}
+
+function getFormattedDate(date, format) {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+
+  if (format === "YYYY/MM/DD") {
+    return `${year}/${month}/${day}`;
+  }
+  // You can add more formats if needed
+  return date.toString();
 }
 function formatCurrency(amount: number): string {
   const formatter = new Intl.NumberFormat("vi-VN", {
@@ -49,20 +69,20 @@ const ModalAddTransaction = (props: any) => {
     useGetUserCategoriesQuery(userId);
   let { data: goals, isLoading: isLoadingGoals } = useGetUserGoalsQuery(userId);
 
+  const [createRecord, { isLoading }] = useCreateRecordMutation();
   const [money, setMoney] = useState(0);
-  const [selected, setSelected] = useState("");
+  const [name, setName] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedSaving, setSelectedSaving] = useState("");
+  const [selectedAccount, setSelectedAccount] = useState("");
   const today = new Date();
   const startDate = getFormatedDate(
-    today.setDate(today.getDate() + 1),
-    "YYYY/MM/DD"
-  );
-  const selectedStartDate = getFormatedDate(
-    today.setDate(today.getDate() - 10),
+    today.setDate(today.getDate()),
     "YYYY/MM/DD"
   );
   const [dateStart, setDateStart] = useState(String(formatDate(startDate)));
   const [dateEnd, setDateEnd] = useState("");
-  const [type, setType] = useState("expense");
+  const [type, setType] = useState(RecordType.EXPENSE);
   const [openSelectDate, setOpenSelectDate] = useState(false);
   const [openSelectEndDate, setOpenSelectEndDate] = useState(false);
 
@@ -82,35 +102,76 @@ const ModalAddTransaction = (props: any) => {
   const handlePressSelectDate = () => {
     setOpenSelectDate(!openSelectDate);
   };
-  const onSubmit = () => {
+  const onSubmit = async () => {
+    const savingCategoryID = categories.find(
+      (item) => item.type === RecordType.SAVING
+    )._id;
+    const formData = {
+      description: name,
+      type: type,
+      amount: money,
+      categoryId:
+        type === RecordType.SAVING ? savingCategoryID : selectedCategory,
+      moneySourceId: selectedAccount,
+      date: dateStart.split("/").reverse().join("-"),
+      goalId: type === RecordType.SAVING ? selectedSaving : null,
+    };
+
+    if (formData.description === "") {
+      Alert.alert("Thiếu thông tin", "Vui lòng nhập mô tả giao dịch");
+      return;
+    }
+
+    if (
+      formData.type === RecordType.EXPENSE ||
+      formData.type === RecordType.INCOME
+    ) {
+      if (formData.categoryId === "") {
+        Alert.alert("Thiếu thông tin", "Vui lòng chọn phân loại giao dịch");
+        return;
+      }
+    } else {
+      if (formData.goalId === "") {
+        Alert.alert("Thiếu thông tin", "Vui lòng chọn mục tiết kiệm");
+        return;
+      }
+    }
+    if (formData.amount === 0) {
+      Alert.alert("Thiếu thông tin", "Vui lòng nhập số tiền");
+      return;
+    }
+    if (formData.moneySourceId === "") {
+      Alert.alert("Thiếu thông tin", "Vui lòng chọn tài khoản liên kết");
+      return;
+    }
+    console.log(formData);
+
+    try {
+      const response = await createRecord(formData).unwrap();
+      console.log("Record created successfully:", response);
+      setIsModalVisible(false);
+    } catch (error) {
+      console.log("Failed to create budget:", error);
+      Alert.alert("Không thể tạo giao dịch mới", `Lỗi: ${error.data.message}`);
+      return;
+    }
+
+    setDateStart(String(formatDate(startDate)));
+    setMoney(0);
+    setName("");
+    setSelectedSaving("");
+    setSelectedCategory("");
+    setSelectedAccount("");
     setIsModalVisible(false);
   };
   const handlePressSelectEndDate = () => {
     setOpenSelectEndDate(!openSelectEndDate);
   };
 
-  const dataBudgetType = [
-    { key: "1", value: "Loại ngân sách", disabled: true },
-    { key: "2", value: "Đi lại" },
-    { key: "3", value: "Ăn uống" },
-    { key: "4", value: "Quần áo" },
-    { key: "5", value: "Mua sắm" },
-    { key: "6", value: "Sức khỏe" },
-    { key: "7", value: "Hóa đơn" },
-    { key: "8", value: "Làm đẹp" },
-    { key: "9", value: "Giải trí" },
-  ];
-  const dataIncomeType = [
-    { key: "0", value: "Chọn phân loại khoản thu", disabled: true },
-    { key: "1", value: "Tiền lương" },
-    { key: "2", value: "Tiền thưởng" },
-    { key: "3", value: "Tiền đầu tư" },
-    { key: "4", value: "Quà tặng" },
-    { key: "5", value: "Học bổng" },
-  ];
-
   const [dataAccountType, setDataAccountType] = useState([]);
-  //   const [dataIncomeType, setDataIncomeType] = useState([]);
+  const [dataIncomeType, setDataIncomeType] = useState([]);
+  const [dataBudgetType, setDataBudgetType] = useState([]);
+  const [dataSavingType, setDataSavingType] = useState([]);
   useEffect(() => {
     if (moneySources && moneySources.length > 0) {
       const data = moneySources.map((item) => {
@@ -121,22 +182,55 @@ const ModalAddTransaction = (props: any) => {
       });
       setDataAccountType(data);
     }
-    // if (categories && categories.length > 0) {
-    //   const data = categories.map((item) => {
-    //     return {
-    //       key: item._id,
-    //       value: item.name,
-    //     };
-    //   });
-    //   setDataAccountType(data);
-    // }
-  }, [moneySources]);
+    if (goals && goals.length > 0) {
+      const data = goals.map((item) => {
+        return {
+          key: item._id,
+          value:
+            item.name +
+            " - Còn lại: " +
+            formatCurrency(item.total - item.balance),
+        };
+      });
+      setDataSavingType(data);
+    }
+    if (categories && categories.length > 0) {
+      const data = categories
+        .filter((item: any) => item.type === RecordType.INCOME) // Lọc các phần tử có type là 'income'
+        .map((item: any) => {
+          return {
+            key: item._id,
+            value: item.name,
+          };
+        });
+      setDataIncomeType(data);
+
+      const dataBudget = categories
+        .filter(
+          (item: any) =>
+            item.type === RecordType.EXPENSE && item.budgetId !== null
+        ) // Lọc các phần tử có type là 'income'
+        .map((item: any) => {
+          return {
+            key: item._id,
+            value: item.name,
+          };
+        });
+      setDataBudgetType(dataBudget);
+    }
+  }, [categories, moneySources, goals]);
   return (
     <View>
       <Modal
         visible={isModalVisible}
         transparent={true}
         onRequestClose={() => {
+          setDateStart(String(formatDate(startDate)));
+          setMoney(0);
+          setName("");
+          setSelectedSaving("");
+          setSelectedCategory("");
+          setSelectedAccount("");
           setIsModalVisible(false);
         }}
         animationType="slide"
@@ -177,9 +271,12 @@ const ModalAddTransaction = (props: any) => {
                 title="X"
                 color={ColorSystem.neutral[400]}
                 onPress={() => {
-                  setDateStart("");
-                  setDateEnd("");
+                  setDateStart(String(formatDate(startDate)));
                   setMoney(0);
+                  setName("");
+                  setSelectedSaving("");
+                  setSelectedCategory("");
+                  setSelectedAccount("");
                   setIsModalVisible(false);
                 }}
               />
@@ -195,23 +292,47 @@ const ModalAddTransaction = (props: any) => {
                   >
                     <CheckBox
                       title="Khoản thu"
-                      checked={type === "income"}
-                      onPress={() => setType("income")}
+                      checked={type === RecordType.INCOME}
+                      onPress={() => {
+                        setType(RecordType.INCOME);
+                        setDateStart(String(formatDate(startDate)));
+                        setMoney(0);
+                        setName("");
+                        setSelectedSaving("");
+                        setSelectedCategory("");
+                        setSelectedAccount("");
+                      }}
                     />
                     <CheckBox
                       title="Khoản chi"
-                      checked={type === "expense"}
-                      onPress={() => setType("expense")}
+                      checked={type === RecordType.EXPENSE}
+                      onPress={() => {
+                        setType(RecordType.EXPENSE);
+                        setDateStart(String(formatDate(startDate)));
+                        setMoney(0);
+                        setName("");
+                        setSelectedSaving("");
+                        setSelectedCategory("");
+                        setSelectedAccount("");
+                      }}
                     />
                     <CheckBox
                       title="Tiết kiệm"
-                      checked={type === "saving"}
-                      onPress={() => setType("saving")}
+                      checked={type === RecordType.SAVING}
+                      onPress={() => {
+                        setType(RecordType.SAVING);
+                        setDateStart(String(formatDate(startDate)));
+                        setMoney(0);
+                        setName("");
+                        setSelectedSaving("");
+                        setSelectedCategory("");
+                        setSelectedAccount("");
+                      }}
                     />
                   </ScrollView>
                 </View>
               </View>
-              {type !== "saving" && (
+              {type !== RecordType.SAVING && (
                 <View style={styles.group}>
                   <Text style={styles.label}>Tên giao dịch</Text>
                   <MaterialIcons
@@ -225,21 +346,52 @@ const ModalAddTransaction = (props: any) => {
                     size={22}
                     color={ColorSystem.neutral[400]}
                   />
-                  <TextInput style={styles.input} placeholder="Mô tả" />
+                  <TextInput
+                    onChangeText={(val) => {
+                      setName(val);
+                    }}
+                    style={styles.input}
+                    placeholder="Mô tả"
+                  />
                 </View>
               )}
               <View style={styles.group}>
                 <Text style={styles.label}>
                   Chọn phân loại{" "}
-                  {type === "expense"
+                  {type === RecordType.EXPENSE
                     ? "chi"
-                    : type === "income"
+                    : type === RecordType.INCOME
                     ? "thu"
                     : "tiết kiệm"}
                 </Text>
                 <SelectList
-                  setSelected={(val) => setSelected(val)}
-                  data={type === "income" ? dataIncomeType : dataBudgetType}
+                  setSelected={(val) => {
+                    let dataSelectList = [];
+                    if (type === RecordType.EXPENSE) {
+                      dataSelectList = dataBudgetType;
+                      setSelectedCategory(
+                        dataSelectList.find((item) => item.value === val).key
+                      );
+                    } else if (type === RecordType.INCOME) {
+                      dataSelectList = dataIncomeType;
+                      setSelectedCategory(
+                        dataSelectList.find((item) => item.value === val).key
+                      );
+                    } else {
+                      dataSelectList = dataSavingType;
+                      setSelectedSaving(
+                        dataSelectList.find((item) => item.value === val).key
+                      );
+                      setName(val.substring(0, val.indexOf(" - Còn lại:")));
+                    }
+                  }}
+                  data={
+                    type === RecordType.INCOME
+                      ? dataIncomeType
+                      : type === RecordType.EXPENSE
+                      ? dataBudgetType
+                      : dataSavingType
+                  }
                   save="value"
                 />
               </View>
@@ -266,14 +418,6 @@ const ModalAddTransaction = (props: any) => {
                   placeholder="0.000 VND"
                   precision={0}
                   minValue={0}
-                  // showPositiveSign
-                  onChangeText={(formattedValue) => {
-                    console.log(
-                      parseInt(
-                        formattedValue.replace(/\./g, "").replace(" VND", "")
-                      )
-                    ); // 100.000 VND
-                  }}
                 />
               </View>
               <View style={styles.group}>
@@ -300,7 +444,11 @@ const ModalAddTransaction = (props: any) => {
                 <Text style={styles.label}>Tài khoản</Text>
 
                 <SelectList
-                  setSelected={(val) => setSelected(val)}
+                  setSelected={(val) =>
+                    setSelectedAccount(
+                      dataAccountType.find((item) => item.value === val).key
+                    )
+                  }
                   data={dataAccountType}
                   save="value"
                 />
@@ -322,10 +470,13 @@ const ModalAddTransaction = (props: any) => {
           <View style={styles.centeredView}>
             <View style={styles.modalDateView}>
               <DatePicker
+                disabled={true}
                 mode="calendar"
                 selected={dateStart}
                 onDateChange={handleChangeDateStart}
-                minimumDate={selectedStartDate}
+                minimumDate={startDate}
+                maximumDate={getLastDayOfMonth(new Date())}
+                placeholder="Chọn ngày"
               />
               <TouchableOpacity onPress={handlePressSelectDate}>
                 <Text>Close</Text>
@@ -344,6 +495,7 @@ const ModalAddTransaction = (props: any) => {
                 selected={dateEnd}
                 onDateChange={handleChangeDateEnd}
                 minimumDate={formatDate(dateStart)}
+                maximumDate={getToday("YYYY/MM/DD")}
               />
               <TouchableOpacity onPress={handlePressSelectEndDate}>
                 <Text>Close</Text>
