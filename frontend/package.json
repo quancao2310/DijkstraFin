@@ -47,7 +47,6 @@
     "react-native-svg": "14.1.0",
     "react-native-toast-message": "^2.2.0",
     "react-redux": "^9.1.1",
-    "victory-native": "^40.2.1",
     "xdate": "^0.8.2"
   },
   "devDependencies": {
