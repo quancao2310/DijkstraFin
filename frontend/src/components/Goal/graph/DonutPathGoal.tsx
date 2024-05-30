@@ -16,7 +16,7 @@ type Props = {
   index: number;
 };
 
-const DonutPath = ({
+const DonutPathGoal = ({
   radius,
   gap,
   strokeWidth,
@@ -77,4 +77,4 @@ const DonutPath = ({
   );
 };
 
-export default DonutPath;
+export default DonutPathGoal;

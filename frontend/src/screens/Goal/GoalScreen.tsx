@@ -28,6 +28,7 @@ import GoalCardDetail from "../../components/Goal/goal/GoalCardDetail";
 import TransactionCard from "../../components/Home/add/transaction/TransactionCard";
 import { useAppDispatch } from "../../hooks/redux";
 import { stateToggle } from "../../store/reducers/addMoneySrcModal.reducer";
+import CircleGraphGoal from "../../components/Goal/graph/CircleGraphGoal";
 
 const GoalScreen = ({ navigation }: any) => {
   const [isAddBudgetModalVisible, setIsAddBudgetModalVisible] = useState(false);
@@ -97,7 +98,7 @@ const GoalScreen = ({ navigation }: any) => {
         showsHorizontalScrollIndicator={false}
       >
         <View style={styles.containerview}>
-          <CircleGraph />
+          <CircleGraphGoal goals={goals} />
           <View style={styles.addBudget}>
             <Text style={{ fontSize: 20, fontWeight: "500" }}>Kế hoạch</Text>
             <TouchableOpacity
@@ -115,7 +116,7 @@ const GoalScreen = ({ navigation }: any) => {
             </TouchableOpacity>
           </View>
           <View style={{ paddingBottom: 15 }}>
-            <ListCardGoal goals={goals} />
+            {goals && goals.length > 0 && <ListCardGoal goals={goals} />}
           </View>
           {goals &&
             goals.length > 0 &&
@@ -202,6 +203,7 @@ const GoalScreen = ({ navigation }: any) => {
           <ModalAddTransaction
             isModalVisible={isAddTransactionModalVisible}
             setIsModalVisible={setIsAddTransactionModalVisible}
+            navigation={navigation}
           />
         </View>
       </ScrollView>

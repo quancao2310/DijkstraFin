@@ -15,6 +15,7 @@ import {
   useGetUserBudgetsQuery,
   useGetUserCategoriesQuery,
 } from "../../services/users";
+import IconBudgetSystem from "../../icon/IconBugetSystem";
 
 const BudgetStatistic = () => {
   const userId = useAppSelector((state: RootState) => state.LoginStatus.userId);

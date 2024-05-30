@@ -48,10 +48,7 @@ function formatDate(inputDate) {
   return formattedDate;
 }
 const today = new Date();
-const startDate = getFormatedDate(
-  today.setDate(today.getDate() + 1),
-  "YYYY/MM/DD"
-);
+const startDate = getFormatedDate(today.setDate(today.getDate()), "YYYY/MM/DD");
 const ModalAddGoal = (props: any) => {
   const { isModalVisible, setIsModalVisible } = props;
   const userId = useSelector((state: RootState) => state.LoginStatus.userId);
@@ -132,7 +129,10 @@ const ModalAddGoal = (props: any) => {
       return;
     }
     if (formData.moneySourceId === "") {
-      Alert.alert("Chưa điền đủ thông tin", "Vui lòng chọn tài khoản liên kết");
+      Alert.alert(
+        "Chưa điền đủ thông tin",
+        "Vui lòng chọn nguồn tiền liên kết"
+      );
       return;
     }
     console.log(formData);
@@ -384,7 +384,7 @@ const ModalAddGoal = (props: any) => {
                 </TouchableOpacity>
               </View>
               <View style={styles.group}>
-                <Text style={styles.label}>Tài khoản</Text>
+                <Text style={styles.label}>Nguồn tiền</Text>
 
                 <SelectList
                   setSelected={(val) =>

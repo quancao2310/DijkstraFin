@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -31,8 +32,11 @@ import { set } from "date-fns";
 import {
   useGetUserBudgetsQuery,
   useGetUserCategoriesQuery,
+  useGetUserMoneySourcesQuery,
   useGetUserRecordsQuery,
 } from "../../services/users";
+import { useAppDispatch } from "../../hooks/redux";
+import { stateToggle } from "../../store/reducers/addMoneySrcModal.reducer";
 
 // const records = [
 //   {
@@ -103,6 +107,8 @@ const HomeScreen = ({ navigation }: any) => {
     useGetUserBudgetsQuery(userId);
   let { data: records, isLoading: isLoadingRecords } =
     useGetUserRecordsQuery(userId);
+  let { data: moneySources, isLoading: isLoadingMoneySources } =
+    useGetUserMoneySourcesQuery(userId);
 
   const [budgetCategories, setBudgetCategories] = useState([]);
   const [budgetsInfo, setBudgetsInfo] = useState([]);
@@ -112,7 +118,30 @@ const HomeScreen = ({ navigation }: any) => {
   const handleAddBudget = () => {
     setIsAddBudgetModalVisible(true);
   };
+  const dispatch = useAppDispatch();
   const handleAddTransaction = () => {
+    if (moneySources && moneySources.length == 0) {
+      Alert.alert(
+        "Chưa tạo nguồn tiền",
+        "Vui lòng tạo nguồn tiền trước để liên kết",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel",
+          },
+          {
+            text: "Tạo nguồn tiền",
+            onPress: () => {
+              console.log("Tạo nguồn tiền");
+              dispatch(stateToggle());
+              navigation.navigate("Ví của bạn");
+            },
+          },
+        ]
+      );
+      return;
+    }
     setIsAddTransactionModalVisible(true);
   };
   const refreshNewBudget = (data: any) => {
@@ -214,8 +243,9 @@ const HomeScreen = ({ navigation }: any) => {
         preprocessBudgetCategories();
         setNewBudget(null);
       }
+      console.log(budgetsInfo);
     }
-  }, [categories, budgets]);
+  }, [categories, budgets, moneySources]);
 
   return (
     <SafeAreaView
@@ -237,7 +267,7 @@ const HomeScreen = ({ navigation }: any) => {
           showsHorizontalScrollIndicator={false}
         >
           <View style={styles.containerview}>
-            <CircleGraph />
+            <CircleGraph budgets={budgetsInfo} />
             <View style={styles.addBudget}>
               <Text style={{ fontSize: 20, fontWeight: "500" }}>Ngân sách</Text>
               <TouchableOpacity
@@ -353,6 +383,7 @@ const HomeScreen = ({ navigation }: any) => {
             <ModalAddTransaction
               isModalVisible={isAddTransactionModalVisible}
               setIsModalVisible={setIsAddTransactionModalVisible}
+              navigation={navigation}
             />
           </View>
         </ScrollView>

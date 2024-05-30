@@ -1,8 +1,13 @@
 import { StyleSheet, View } from "react-native";
 import React from "react";
-import { SharedValue, useDerivedValue } from "react-native-reanimated";
+import {
+  SharedValue,
+  useDerivedValue,
+  useAnimatedReaction,
+  useSharedValue,
+} from "react-native-reanimated";
 import { Canvas, Path, SkFont, Skia, Text } from "@shopify/react-native-skia";
-import DonutPath from "./DonutPath";
+import DonutPathGoal from "./DonutPathGoal";
 
 type Props = {
   n: number;
@@ -16,8 +21,11 @@ type Props = {
   font: SkFont;
   smallFont: SkFont;
 };
+const formatNumber = (num: number) => {
+  return num.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, "$1.");
+};
 
-const DonutChart = ({
+const DonutChartGoal = ({
   n,
   gap,
   decimals,
@@ -36,7 +44,12 @@ const DonutChart = ({
   path.addCircle(radius, radius, innerRadius);
 
   const targetText = useDerivedValue(
-    () => `${Math.round(totalValue.value)}đ`,
+    () =>
+      Math.round(totalValue.value) >= 1000000000
+        ? `${(Math.round(totalValue.value) / 1000000000).toFixed(2)} tỷ`
+        : Math.round(totalValue.value) >= 10000000
+        ? `${(Math.round(totalValue.value) / 10000000).toFixed(2)} triệu`
+        : `${Math.round(totalValue.value)}₫`,
     []
   );
 
@@ -63,7 +76,7 @@ const DonutChart = ({
         />
         {array.map((_, index) => {
           return (
-            <DonutPath
+            <DonutPathGoal
               key={index}
               radius={radius}
               strokeWidth={strokeWidth}
@@ -78,7 +91,7 @@ const DonutChart = ({
         <Text
           x={radius - smallFontSize.width / 2}
           y={radius + smallFontSize.height / 2 - fontSize.height / 1.2}
-          text={" Ngân sách "}
+          text={" Kế hoạch "}
           font={smallFont}
           color="black"
         />
@@ -94,7 +107,7 @@ const DonutChart = ({
   );
 };
 
-export default DonutChart;
+export default DonutChartGoal;
 
 const styles = StyleSheet.create({
   container: {
