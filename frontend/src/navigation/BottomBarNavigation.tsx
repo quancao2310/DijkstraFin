@@ -11,8 +11,13 @@ import WalletScreen from "../screens/Wallet/WalletScreen";
 import ColorSystem from "../color/ColorSystem";
 import GoalScreen from "../screens/Goal/GoalScreen";
 import StatisticScreen from "../screens/Statistic/StatisticScreen";
+import OtherScreen from "../screens/Other/Other";
+import { useAppSelector } from "../hooks/redux";
+import { RootState } from "../store";
 const Tab = createBottomTabNavigator();
 export default function BottomBarNavigation() {
+  const login = useAppSelector((state: RootState) => state.LoginStatus.isLogin);
+  if (!login) return <></>;
   return (
     <Tab.Navigator
       screenOptions={{
@@ -83,7 +88,7 @@ export default function BottomBarNavigation() {
       />
       <Tab.Screen
         name="Khác"
-        component={TempScreen}
+        component={OtherScreen}
         options={{
           headerShown: false,
           tabBarIcon: (props) => (
