@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseInterceptors,
 } from "@nestjs/common";
 import { MoneySourcesService } from "./money-sources.service";
 import { MoneySource } from "./schemas/money-source.schema";
@@ -17,10 +18,13 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from "@nestjs/swagger";
+import { CheckUserIdInterceptor } from "../auth/auth.interceptor";
+import { SkipCheckUserId } from "../auth/skip-check-user-id.decorator";
 
 @Controller("money-sources")
 @ApiTags("Money Sources")
 @ApiBearerAuth()
+@UseInterceptors(CheckUserIdInterceptor)
 export class MoneySourcesController {
   constructor(private readonly moneySourceService: MoneySourcesService) {}
 
@@ -35,6 +39,10 @@ export class MoneySourcesController {
     status: 400,
     description: "The required fields are missing or in invalid format.",
   })
+  @ApiResponse({
+    status: 403,
+    description: "You don\'t have permission to make this action!",
+  })
   async create(
     @Body() createMoneySourceDto: CreateMoneySourceDto
   ): Promise<MoneySource> {
@@ -48,6 +56,7 @@ export class MoneySourcesController {
     description: "All the money sources.",
     type: [MoneySource],
   })
+  @SkipCheckUserId()
   async findAll(): Promise<MoneySource[]> {
     return this.moneySourceService.findAll();
   }
@@ -66,6 +75,10 @@ export class MoneySourcesController {
   @ApiResponse({
     status: 404,
     description: "There is no money source with the given id.",
+  })
+  @ApiResponse({
+    status: 403,
+    description: "You don\'t have permission to make this action!",
   })
   async findOne(@Param("id") id: string): Promise<MoneySource> {
     return this.moneySourceService.findOne(id);
@@ -86,6 +99,10 @@ export class MoneySourcesController {
   @ApiResponse({
     status: 404,
     description: "There is no money source with the given id.",
+  })
+  @ApiResponse({
+    status: 403,
+    description: "You don\'t have permission to make this action!",
   })
   async update(
     @Param("id") id: string,
@@ -108,6 +125,10 @@ export class MoneySourcesController {
   @ApiResponse({
     status: 404,
     description: "There is no money source with the given id.",
+  })
+  @ApiResponse({
+    status: 403,
+    description: "You don\'t have permission to make this action!",
   })
   async remove(@Param("id") id: string): Promise<MoneySource> {
     return this.moneySourceService.remove(id);
