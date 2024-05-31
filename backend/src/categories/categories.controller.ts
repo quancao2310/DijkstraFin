@@ -6,6 +6,7 @@ import {
   Post,
   Patch,
   Delete,
+  UseInterceptors,
 } from "@nestjs/common";
 import { CategoriesService } from "./categories.service";
 import { Category } from "./schemas/category.schema";
@@ -17,10 +18,13 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from "@nestjs/swagger";
+import { CheckUserIdInterceptor } from "../auth/auth.interceptor";
+import { SkipCheckUserId } from "../auth/skip-check-user-id.decorator";
 
 @Controller("categories")
 @ApiTags("Categories")
 @ApiBearerAuth()
+@UseInterceptors(CheckUserIdInterceptor)
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
@@ -35,6 +39,10 @@ export class CategoriesController {
     status: 400,
     description: "The required fields are missing or in invalid format.",
   })
+  @ApiResponse({
+    status: 403,
+    description: "You don\'t have permission to make this action!",
+  })
   async create(
     @Body() createCategoryDto: CreateCategoryDto
   ): Promise<Category> {
@@ -48,6 +56,7 @@ export class CategoriesController {
     description: "All the default categories.",
     type: [Category],
   })
+  @SkipCheckUserId()
   async findAll(): Promise<Category[]> {
     return this.categoriesService.findAll();
   }
@@ -67,6 +76,10 @@ export class CategoriesController {
     status: 404,
     description: "There is no category with the given id.",
   })
+  @ApiResponse({
+    status: 403,
+    description: "You don\'t have permission to make this action!",
+  })
   async findOne(@Param("id") id: string): Promise<Category> {
     return this.categoriesService.findOne(id);
   }
@@ -85,6 +98,10 @@ export class CategoriesController {
   @ApiResponse({
     status: 404,
     description: "There is no category with the given id.",
+  })
+  @ApiResponse({
+    status: 403,
+    description: "You don\'t have permission to make this action!",
   })
   async update(
     @Param("id") id: string,
@@ -107,6 +124,10 @@ export class CategoriesController {
   @ApiResponse({
     status: 404,
     description: "There is no category with the given id.",
+  })
+  @ApiResponse({
+    status: 403,
+    description: "You don\'t have permission to make this action!",
   })
   async remove(@Param("id") id: string): Promise<Category> {
     return this.categoriesService.remove(id);
