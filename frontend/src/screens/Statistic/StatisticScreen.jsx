@@ -12,7 +12,7 @@ const StatisticScreen = () => {
           <DateFilterButton />
           <RecordStatisticByMoneySource></RecordStatisticByMoneySource>
           <View style={style.titleContainer}>
-            <Text style={style.title}>Danh mục thu chi</Text>
+            <Text style={style.title}>Danh mục chi tiêu</Text>
           </View>
           <BudgetStatistic></BudgetStatistic>
         </SafeAreaView>

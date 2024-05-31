@@ -9,6 +9,7 @@ import PieChart from "react-native-pie-chart";
 import { useAppSelector } from "../../hooks/redux";
 import { RootState } from "../../store";
 import { useGetUserRecordsQuery } from "../../services/users";
+import { NoData } from "../utils/NoData";
 
 const RecordStatisticByMoneySource = () => {
   const userId = useAppSelector((state: RootState) => state.LoginStatus.userId);
@@ -96,7 +97,7 @@ const RecordStatisticByMoneySource = () => {
       </View>
     );
   }
-
+  if (totalIncome + totalOutcome == 0) return <NoData></NoData>;
   return (
     <>
       <MoneyFlowIndicator
@@ -123,23 +124,28 @@ const RecordStatisticByMoneySource = () => {
             marginStart: 12,
           }}
         >
-          <PieChart
-            widthAndHeight={widthAndHeight}
-            series={incomeSeries}
-            sliceColor={colorList}
-            coverRadius={coverRadius}
-            coverFill={coverFill}
-          />
-          <View style={styles.textView}>
-            <Text
-              style={[
-                styles.text,
-                { color: ColorSystem.success[700], fontWeight: "bold" },
-              ]}
-            >
-              Tiền thu
-            </Text>
-          </View>
+          {incomeSeries.length != 0 &&
+            incomeSeries.reduce((prev, item) => prev + item, 0) != 0 && (
+              <>
+                <PieChart
+                  widthAndHeight={widthAndHeight}
+                  series={incomeSeries}
+                  sliceColor={colorList}
+                  coverRadius={coverRadius}
+                  coverFill={coverFill}
+                />
+                <View style={styles.textView}>
+                  <Text
+                    style={[
+                      styles.text,
+                      { color: ColorSystem.success[700], fontWeight: "bold" },
+                    ]}
+                  >
+                    Tiền thu
+                  </Text>
+                </View>
+              </>
+            )}
         </View>
         <View
           style={{
@@ -152,34 +158,45 @@ const RecordStatisticByMoneySource = () => {
             marginStart: 12,
           }}
         >
-          <PieChart
-            widthAndHeight={widthAndHeight}
-            series={outcomeSeries}
-            sliceColor={colorList}
-            coverRadius={coverRadius}
-            coverFill={coverFill}
-          />
-          <View style={styles.textView}>
-            <Text
-              style={[
-                styles.text,
-                { color: ColorSystem.danger[700], fontWeight: "bold" },
-              ]}
-            >
-              Tiền chi
-            </Text>
-          </View>
+          {outcomeSeries.length != 0 &&
+            outcomeSeries.reduce((prev, item) => prev + item, 0) != 0 && (
+              <>
+                <PieChart
+                  widthAndHeight={widthAndHeight}
+                  series={outcomeSeries}
+                  sliceColor={colorList}
+                  coverRadius={coverRadius}
+                  coverFill={coverFill}
+                />
+                <View style={styles.textView}>
+                  <Text
+                    style={[
+                      styles.text,
+                      { color: ColorSystem.danger[700], fontWeight: "bold" },
+                    ]}
+                  >
+                    Tiền chi
+                  </Text>
+                </View>
+              </>
+            )}
         </View>
       </View>
       <View style={{ flexDirection: "row" }}>
-        <LegendComponent
-          labels={calculatePercentagesLabel(allNamesArray, incomeSeries)}
-          colors={colorList}
-        ></LegendComponent>
-        <LegendComponent
-          labels={calculatePercentagesLabel(allNamesArray, outcomeSeries)}
-          colors={colorList}
-        ></LegendComponent>
+        {incomeSeries.length != 0 &&
+          incomeSeries.reduce((prev, item) => prev + item, 0) != 0 && (
+            <LegendComponent
+              labels={calculatePercentagesLabel(allNamesArray, incomeSeries)}
+              colors={colorList}
+            ></LegendComponent>
+          )}
+        {outcomeSeries.length != 0 &&
+          outcomeSeries.reduce((prev, item) => prev + item, 0) != 0 && (
+            <LegendComponent
+              labels={calculatePercentagesLabel(allNamesArray, outcomeSeries)}
+              colors={colorList}
+            ></LegendComponent>
+          )}
       </View>
     </>
   );

@@ -66,7 +66,7 @@ export default function WalletScreen() {
         <View style={styles.innerScroll}>
           <ScrollView nestedScrollEnabled={true}>
             {isLoading && (
-              <View style={{ height: "100%", padding: "50%" }}>
+              <View style={{ height: "50%", padding: "20%" }}>
                 <WaitingIndicator />
               </View>
             )}
