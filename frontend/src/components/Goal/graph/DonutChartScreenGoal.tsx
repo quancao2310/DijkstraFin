@@ -1,16 +1,17 @@
 /* eslint-disable react-native/no-inline-styles */
 import React, { useEffect, useState } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
-import DonutChart from "./DonutChart";
+import DonutChartGoal from "./DonutChartGoal";
 import { useFont } from "@shopify/react-native-skia";
 import { TouchableOpacity } from "react-native";
 import { useSharedValue, withTiming } from "react-native-reanimated";
 import { calculatePercentage } from "./utils/calculatePercentage";
-import RenderItem from "./RenderItem";
+import RenderItemGoal from "./RenderItemGoal";
 import { SafeAreaView } from "react-native-safe-area-context";
 import IconBudgetSystem from "../../../icon/IconBugetSystem";
 import { set } from "date-fns";
 import ColorSystem from "../../../color/ColorSystem";
+import IconGoalSystem from "../../../icon/IconGoalSystem";
 
 interface Data {
   name: string;
@@ -24,14 +25,16 @@ const STROKE_WIDTH = 30;
 const OUTER_STROKE_WIDTH = 50;
 const GAP = 0.05;
 
-export const DonutChartContainer = ({ budgets }) => {
-  const n = budgets.length;
+export const DonutChartContainerGoal = ({ goals }) => {
+  const n = goals.length;
   const [data, setData] = useState<Data[]>([]);
   const totalValue = useSharedValue(0);
   const decimals = useSharedValue<number[]>([]);
-  const colors = budgets
-    .filter((item) => item.balance - item.used > 0)
-    .map((item, index) => IconBudgetSystem[item.name].color);
+  const colors = goals
+    .filter((item) => {
+      return item.isCompleted === false;
+    })
+    .map((item, index) => IconGoalSystem[item.icon].color);
 
   const font = useFont(require("./fonts/Roboto-Bold.ttf"), 28);
   const smallFont = useFont(require("./fonts/Roboto-Light.ttf"), 20);
@@ -45,14 +48,16 @@ export const DonutChartContainer = ({ budgets }) => {
       setFontsLoaded(true);
       generateData();
     }
-  }, [font, smallFont, budgets]);
+  }, [font, smallFont, goals]);
 
   const generateData = () => {
-    const arrayOfObjects = budgets
-      .filter((item) => item.balance - item.used > 0)
+    const arrayOfObjects = goals
+      .filter((item) => {
+        return item.isCompleted === false;
+      })
       .map((item, index) => ({
         name: item.name,
-        value: item.balance - item.used,
+        value: item.total - item.balance,
         color: colors[index],
       }));
     const generateNumbers = arrayOfObjects.map((item) => item.value);
@@ -87,7 +92,7 @@ export const DonutChartContainer = ({ budgets }) => {
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.chartContainer}>
-          <DonutChart
+          <DonutChartGoal
             radius={RADIUS}
             gap={GAP}
             strokeWidth={STROKE_WIDTH}
@@ -107,7 +112,7 @@ export const DonutChartContainer = ({ budgets }) => {
         </TouchableOpacity>
         {isDetailVisible &&
           data.map((item, index) => (
-            <RenderItem item={item} key={index} index={index} />
+            <RenderItemGoal item={item} key={index} index={index} />
           ))}
       </ScrollView>
     </View>
@@ -138,4 +143,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default DonutChartContainer;
+export default DonutChartContainerGoal;

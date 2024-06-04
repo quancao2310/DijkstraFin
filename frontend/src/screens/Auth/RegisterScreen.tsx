@@ -316,7 +316,8 @@ const styles = StyleSheet.create({
   },
   input: {
     paddingLeft: 35,
-    paddingVertical: 18,
+    paddingVertical: 0,
+    height: 50,
     borderBottomWidth: 1,
     borderColor: "gray",
     backgroundColor: "#fff",

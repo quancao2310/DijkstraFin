@@ -15,6 +15,8 @@ import {
   useGetUserBudgetsQuery,
   useGetUserCategoriesQuery,
 } from "../../services/users";
+import IconBudgetSystem from "../../icon/IconBugetSystem";
+import { NoData } from "../utils/NoData";
 
 const BudgetStatistic = () => {
   const userId = useAppSelector((state: RootState) => state.LoginStatus.userId);
@@ -78,26 +80,31 @@ const BudgetStatistic = () => {
             paddingTop: 50,
           }}
         >
-          <PieChart
-            widthAndHeight={widthAndHeight}
-            series={series}
-            sliceColor={colorList}
-            coverRadius={coverRadius}
-            coverFill={coverFill}
-          />
-          <View style={styles.textView}>
-            <Text
-              style={[
-                styles.text,
-                { color: ColorSystem.danger[700], fontWeight: "bold" },
-              ]}
-            >
-              {formatNumberWithPeriods(
-                series.reduce((sum, item) => sum + item, 0)
-              )}{" "}
-              VNĐ
-            </Text>
-          </View>
+          {series.length != 0 && (
+            <PieChart
+              widthAndHeight={widthAndHeight}
+              series={series}
+              sliceColor={colorList}
+              coverRadius={coverRadius}
+              coverFill={coverFill}
+            />
+          )}
+          {series.length == 0 && <NoData></NoData>}
+          {series.length != 0 && (
+            <View style={styles.textView}>
+              <Text
+                style={[
+                  styles.text,
+                  { color: ColorSystem.danger[700], fontWeight: "bold" },
+                ]}
+              >
+                {formatNumberWithPeriods(
+                  series.reduce((sum, item) => sum + item, 0)
+                )}{" "}
+                VNĐ
+              </Text>
+            </View>
+          )}
         </View>
         <LegendComponent
           labels={calculatePercentagesLabel(labelList, series)}

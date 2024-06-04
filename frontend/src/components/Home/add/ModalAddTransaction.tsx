@@ -61,7 +61,7 @@ function formatCurrency(amount: number): string {
   return formatter.format(amount);
 }
 const ModalAddTransaction = (props: any) => {
-  const { isModalVisible, setIsModalVisible } = props;
+  const { isModalVisible, setIsModalVisible, navigation } = props;
   const userId = useSelector((state: RootState) => state.LoginStatus.userId);
   let { data: moneySources, isLoading: isLoadingMoneySources } =
     useGetUserMoneySourcesQuery(userId);
@@ -141,7 +141,7 @@ const ModalAddTransaction = (props: any) => {
       return;
     }
     if (formData.moneySourceId === "") {
-      Alert.alert("Thiếu thông tin", "Vui lòng chọn tài khoản liên kết");
+      Alert.alert("Thiếu thông tin", "Vui lòng chọn nguồn tiền liên kết");
       return;
     }
     console.log(formData);
@@ -206,10 +206,7 @@ const ModalAddTransaction = (props: any) => {
       setDataIncomeType(data);
 
       const dataBudget = categories
-        .filter(
-          (item: any) =>
-            item.type === RecordType.EXPENSE && item.budgetId !== null
-        ) // Lọc các phần tử có type là 'income'
+        .filter((item: any) => item.type === RecordType.EXPENSE) // Lọc các phần tử có type là 'income'
         .map((item: any) => {
           return {
             key: item._id,
@@ -240,7 +237,7 @@ const ModalAddTransaction = (props: any) => {
             borderTopLeftRadius: 30,
             borderTopRightRadius: 30,
             overflow: "hidden",
-            height: "80%",
+            height: "83%",
             marginTop: "auto",
             backgroundColor: "#fff",
             padding: 30,
@@ -320,6 +317,29 @@ const ModalAddTransaction = (props: any) => {
                       title="Tiết kiệm"
                       checked={type === RecordType.SAVING}
                       onPress={() => {
+                        if (goals && goals.length === 0) {
+                          Alert.alert(
+                            "Chưa tạo kế hoạch",
+                            "Vui lòng tạo kế hoạch cần tiết kiệm trước",
+                            [
+                              {
+                                text: "Cancel",
+                                onPress: () => console.log("Cancel Pressed"),
+                                style: "cancel",
+                              },
+                              {
+                                text: "Tạo kế hoạch tiết kiệm",
+                                onPress: () => {
+                                  console.log("Tạo kế hoạch");
+                                  navigation.navigate("Kế hoạch");
+                                  setIsModalVisible(false);
+                                },
+                              },
+                            ]
+                          );
+
+                          return;
+                        }
                         setType(RecordType.SAVING);
                         setDateStart(String(formatDate(startDate)));
                         setMoney(0);
@@ -441,7 +461,7 @@ const ModalAddTransaction = (props: any) => {
                 </TouchableOpacity>
               </View>
               <View style={styles.group}>
-                <Text style={styles.label}>Tài khoản</Text>
+                <Text style={styles.label}>Nguồn tiền</Text>
 
                 <SelectList
                   setSelected={(val) =>
@@ -513,15 +533,18 @@ const styles = StyleSheet.create({
   group: { marginTop: 15 },
   input: {
     paddingLeft: 35,
-    paddingVertical: 14,
+    paddingVertical: 0,
     borderWidth: 1,
+    height: 45,
     borderRadius: 10,
     borderColor: "gray",
     backgroundColor: "#fff",
   },
   input1: {
+    justifyContent: "center",
     paddingLeft: 20,
-    paddingVertical: 14,
+    paddingVertical: 0,
+    height: 45,
     borderWidth: 1,
     borderRadius: 10,
     borderColor: "gray",

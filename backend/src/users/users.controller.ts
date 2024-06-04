@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from "@nestjs/common";
+import { Controller, Get, Param, UseInterceptors } from "@nestjs/common";
 import { UsersService } from "./users.service";
 import { User } from "./schemas/users.schema";
 import {
@@ -18,10 +18,13 @@ import { Budget } from "../budgets/schemas/budget.schema";
 import { MoneySource } from "../money-sources/schemas/money-source.schema";
 import { Goal } from "../goals/schemas/goal.schema";
 import { Record } from "../records/schemas/record.schema";
+import { CheckUserIdInterceptor } from "../auth/auth.interceptor";
+import { SkipCheckUserId } from "../auth/skip-check-user-id.decorator";
 
 @Controller("users")
 @ApiTags("Users")
 @ApiBearerAuth()
+@UseInterceptors(CheckUserIdInterceptor)
 export class UsersController {
   constructor(
     private readonly usersService: UsersService,
@@ -52,6 +55,7 @@ export class UsersController {
     description: "ID of a user",
     example: "60f4b7f9c3c3e4b5e4f5b7d9",
   })
+  @SkipCheckUserId()
   async findOne(@Param("id") id: string): Promise<Omit<User, "password">> {
     return this.usersService.findOne({ _id: id });
   }
@@ -66,6 +70,10 @@ export class UsersController {
   @ApiResponse({
     status: 400,
     description: "The provided id is invalid.",
+  })
+  @ApiResponse({
+    status: 403,
+    description: "You don\'t have permission to make this action!",
   })
   @ApiParam({
     name: "id",
@@ -92,6 +100,7 @@ export class UsersController {
     description: "ID of a user",
     example: "60f4b7f9c3c3e4b5e4f5b7d9",
   })
+  @SkipCheckUserId()
   async findBudgetsByUserId(@Param("id") id: string): Promise<Budget[]> {
     const categories = await this.categoriesService.findByUserId(id);
     const budgets: Budget[] = [];
@@ -118,6 +127,10 @@ export class UsersController {
     status: 404,
     description: "User with the given ID is not found.",
   })
+  @ApiResponse({
+    status: 403,
+    description: "You don\'t have permission to make this action!",
+  })
   @ApiParam({
     name: "id",
     description: "ID of a user",
@@ -141,6 +154,10 @@ export class UsersController {
   @ApiResponse({
     status: 404,
     description: "User with the given ID is not found.",
+  })
+  @ApiResponse({
+    status: 403,
+    description: "You don\'t have permission to make this action!",
   })
   @ApiParam({
     name: "id",
@@ -172,6 +189,7 @@ export class UsersController {
     example: "60f4b7f9c3c3e4b5e4f5b7d9",
   })
   @Get(":id/records")
+  @SkipCheckUserId()
   async findAllRecord(@Param("id") id: string): Promise<Record[]> {
     const moneySources = await this.moneySourcesService.findByUserId(id);
     let records: Record[] = [];

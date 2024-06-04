@@ -28,6 +28,7 @@ import GoalCardDetail from "../../components/Goal/goal/GoalCardDetail";
 import TransactionCard from "../../components/Home/add/transaction/TransactionCard";
 import { useAppDispatch } from "../../hooks/redux";
 import { stateToggle } from "../../store/reducers/addMoneySrcModal.reducer";
+import CircleGraphGoal from "../../components/Goal/graph/CircleGraphGoal";
 
 const GoalScreen = ({ navigation }: any) => {
   const [isAddBudgetModalVisible, setIsAddBudgetModalVisible] = useState(false);
@@ -97,7 +98,7 @@ const GoalScreen = ({ navigation }: any) => {
         showsHorizontalScrollIndicator={false}
       >
         <View style={styles.containerview}>
-          <CircleGraph />
+          <CircleGraphGoal goals={goals} />
           <View style={styles.addBudget}>
             <Text style={{ fontSize: 20, fontWeight: "500" }}>Kế hoạch</Text>
             <TouchableOpacity
@@ -115,7 +116,7 @@ const GoalScreen = ({ navigation }: any) => {
             </TouchableOpacity>
           </View>
           <View style={{ paddingBottom: 15 }}>
-            <ListCardGoal goals={goals} />
+            {goals && goals.length > 0 && <ListCardGoal goals={goals} />}
           </View>
           {goals &&
             goals.length > 0 &&
@@ -161,38 +162,39 @@ const GoalScreen = ({ navigation }: any) => {
               </Text>
             </TouchableOpacity>
           </View>
-          {(!records ||
-            records.filter((item) => item.type === "saving").length === 0) && (
-            <NoInfo name="giao dịch" />
-          )}
-          {records &&
-            records.length > 0 &&
-            records
-              .filter((item) => item.type === "saving")
-              .slice(0, 3)
-              .map((item, index) => {
-                return <TransactionCard record={item} key={index} />;
-              })}
-          {records &&
-            records.filter((item) => item.type === "saving").length > 3 && (
-              <TouchableOpacity
-                style={{
-                  paddingTop: 15,
-                  paddingBottom: 30,
-                  alignItems: "center",
-                }}
-                onPress={handleViewAllTransactions}
-              >
-                <Text
+          <View style={{ marginBottom: 15 }}>
+            {(!records ||
+              records.filter((item) => item.type === "saving").length ===
+                0) && <NoInfo name="giao dịch" />}
+            {records &&
+              records.length > 0 &&
+              records
+                .filter((item) => item.type === "saving")
+                .slice(0, 3)
+                .map((item, index) => {
+                  return <TransactionCard record={item} key={index} />;
+                })}
+            {records &&
+              records.filter((item) => item.type === "saving").length > 3 && (
+                <TouchableOpacity
                   style={{
-                    color: ColorSystem.secondary[600],
-                    fontSize: 16,
+                    paddingTop: 15,
+                    paddingBottom: 30,
+                    alignItems: "center",
                   }}
+                  onPress={handleViewAllTransactions}
                 >
-                  Xem tất cả
-                </Text>
-              </TouchableOpacity>
-            )}
+                  <Text
+                    style={{
+                      color: ColorSystem.secondary[600],
+                      fontSize: 16,
+                    }}
+                  >
+                    Xem tất cả
+                  </Text>
+                </TouchableOpacity>
+              )}
+          </View>
 
           <ModalAddGoal
             isModalVisible={isAddBudgetModalVisible}
@@ -202,6 +204,7 @@ const GoalScreen = ({ navigation }: any) => {
           <ModalAddTransaction
             isModalVisible={isAddTransactionModalVisible}
             setIsModalVisible={setIsAddTransactionModalVisible}
+            navigation={navigation}
           />
         </View>
       </ScrollView>

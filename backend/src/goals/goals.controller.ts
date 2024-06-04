@@ -6,6 +6,7 @@ import {
   Patch,
   Param,
   Delete,
+  UseInterceptors,
 } from "@nestjs/common";
 import { GoalsService } from "./goals.service";
 import { Goal } from "./schemas/goal.schema";
@@ -17,10 +18,13 @@ import {
   ApiResponse,
   ApiBearerAuth,
 } from "@nestjs/swagger";
+import { CheckUserIdInterceptor } from "../auth/auth.interceptor";
+import { SkipCheckUserId } from "../auth/skip-check-user-id.decorator";
 
 @Controller("goals")
 @ApiTags("Goals")
 @ApiBearerAuth()
+@UseInterceptors(CheckUserIdInterceptor)
 export class GoalsController {
   constructor(private readonly goalsService: GoalsService) {}
 
@@ -35,6 +39,10 @@ export class GoalsController {
     status: 400,
     description: "The required fields are missing or in invalid format.",
   })
+  @ApiResponse({
+    status: 403,
+    description: "You don\'t have permission to make this action!",
+  })
   async create(@Body() createGoalDto: CreateGoalDto): Promise<Goal> {
     return this.goalsService.create(createGoalDto);
   }
@@ -46,6 +54,7 @@ export class GoalsController {
     description: "All the created goals.",
     type: [Goal],
   })
+  @SkipCheckUserId()
   async findAll(): Promise<Goal[]> {
     return this.goalsService.findAll();
   }
@@ -65,6 +74,10 @@ export class GoalsController {
     status: 404,
     description: "There is no goal with the given id.",
   })
+  @ApiResponse({
+    status: 403,
+    description: "You don\'t have permission to make this action!",
+  })
   async findOne(@Param("id") id: string): Promise<Goal> {
     return this.goalsService.findOne(id);
   }
@@ -83,6 +96,10 @@ export class GoalsController {
   @ApiResponse({
     status: 404,
     description: "There is no goal with the given id.",
+  })
+  @ApiResponse({
+    status: 403,
+    description: "You don\'t have permission to make this action!",
   })
   async update(
     @Param("id") id: string,
@@ -105,6 +122,10 @@ export class GoalsController {
   @ApiResponse({
     status: 404,
     description: "There is no goal with the given id.",
+  })
+  @ApiResponse({
+    status: 403,
+    description: "You don\'t have permission to make this action!",
   })
   async remove(@Param("id") id: string): Promise<Goal> {
     return this.goalsService.remove(id);

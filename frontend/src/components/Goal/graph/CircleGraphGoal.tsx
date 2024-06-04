@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { Text, View } from "react-native";
-import DonutChartContainer from "./DonutChartScreen";
-const CircleGraph = ({ budgets }) => {
+import { DonutChartContainerGoal } from "./DonutChartScreenGoal";
+const CircleGraphGoal = ({ goals }) => {
   return (
     <View
       style={{
@@ -12,9 +12,9 @@ const CircleGraph = ({ budgets }) => {
         borderColor: "#555",
       }}
     >
-      <DonutChartContainer budgets={budgets} />
+      <DonutChartContainerGoal goals={goals} />
     </View>
   );
 };
 
-export default CircleGraph;
+export default CircleGraphGoal;
