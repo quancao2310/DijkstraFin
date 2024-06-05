@@ -339,9 +339,10 @@ const HomeScreen = ({ navigation }: any) => {
               </TouchableOpacity>
             </View>
             <View style={{ paddingBottom: 30 }}>
-              {(!records || records.length === 0) && (
-                <NoInfo name="giao dịch" />
-              )}
+              {(!records ||
+                records.filter(
+                  (item) => item.type === "income" || item.type === "expense"
+                ).length === 0) && <NoInfo name="giao dịch" />}
               {records &&
                 records.length > 0 &&
                 records

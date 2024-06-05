@@ -98,7 +98,7 @@ const GoalScreen = ({ navigation }: any) => {
         showsHorizontalScrollIndicator={false}
       >
         <View style={styles.containerview}>
-          <CircleGraphGoal goals={goals} />
+          {goals && <CircleGraphGoal goals={goals} />}
           <View style={styles.addBudget}>
             <Text style={{ fontSize: 20, fontWeight: "500" }}>Kế hoạch</Text>
             <TouchableOpacity
