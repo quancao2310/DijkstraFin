@@ -48,6 +48,11 @@ const LoginScreen = ({ navigation }: any) => {
 
     if (!regexEmail.test(email.toLowerCase())) {
       setCheckMail(false);
+      return;
+    }
+
+    if (!regexEmail.test(email.toLowerCase())) {
+      setCheckMail(false);
     } else {
       setCheckMail(true);
     }
