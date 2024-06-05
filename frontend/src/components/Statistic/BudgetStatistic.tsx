@@ -80,15 +80,16 @@ const BudgetStatistic = () => {
             paddingTop: 50,
           }}
         >
-          {series.length != 0 && (
-            <PieChart
-              widthAndHeight={widthAndHeight}
-              series={series}
-              sliceColor={colorList}
-              coverRadius={coverRadius}
-              coverFill={coverFill}
-            />
-          )}
+          {series.length != 0 &&
+            series.reduce((prev, curr) => prev + curr, 0) != 0 && (
+              <PieChart
+                widthAndHeight={widthAndHeight}
+                series={series}
+                sliceColor={colorList}
+                coverRadius={coverRadius}
+                coverFill={coverFill}
+              />
+            )}
           {series.length == 0 && <NoData></NoData>}
           {series.length != 0 && (
             <View style={styles.textView}>
