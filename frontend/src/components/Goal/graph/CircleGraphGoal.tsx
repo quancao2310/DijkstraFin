@@ -12,7 +12,7 @@ const CircleGraphGoal = ({ goals }) => {
         borderColor: "#555",
       }}
     >
-      <DonutChartContainerGoal goals={goals} />
+      {goals && goals.length >= 0 && <DonutChartContainerGoal goals={goals} />}
     </View>
   );
 };

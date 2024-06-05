@@ -1,5 +1,5 @@
 import { FontAwesome6 } from "@expo/vector-icons";
-import React from "react";
+import React, { useEffect } from "react";
 import IconBudgetSystem from "../../../../icon/IconBugetSystem";
 import ColorSystem from "../../../../color/ColorSystem";
 import { Feather, MaterialIcons } from "@expo/vector-icons";
@@ -57,6 +57,9 @@ const TransactionCard = ({ record }) => {
   if (record.type == "expense" || record.type == "income") {
     iconName = IconTransactionSystem[record.categoryId.name].name;
   }
+  useEffect(() => {
+    console.log("record", record);
+  }, [record]);
   return (
     <>
       <View style={styles.container}>
